@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Hall Pass — Grade 5 Math</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<style>
+  :root {
+    --bg-1: #f5f1ff;
+    --bg-2: #ffe8f3;
+    --ink: #1e1140;
+    --muted: #6b6288;
+    --surface: #ffffff;
+    --surface-soft: #f8f5ff;
+    --line: #ebe5fa;
+    --primary: #6c5ce7;
+    --primary-dark: #5542cf;
+    --primary-soft: #eeeaff;
+    --gold: #fcd34d;
+    --gold-dark: #e5a81a;
+    --success: #10b981;
+    --success-soft: #d1fae5;
+    --wrong: #ef4444;
+    --wrong-soft: #fee2e2;
+    --coral: #ff6b8b;
+    --cyan: #22d3ee;
+    --shadow-sm: 0 4px 12px -2px rgba(108, 92, 231, 0.12);
+    --shadow: 0 12px 28px -8px rgba(108, 92, 231, 0.22);
+    --shadow-lg: 0 24px 48px -12px rgba(108, 92, 231, 0.3);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+  h1, h2, h3, .display { font-family: 'Fredoka', sans-serif; font-weight: 600; letter-spacing: -0.01em; }
+  button { font-family: inherit; cursor: pointer; border: 0; }
+  .hidden { display: none !important; }
+
+  /* ====== LOGO ====== */
+  .logo { display: inline-flex; align-items: center; gap: 10px; font-family: 'Fredoka', sans-serif; font-weight: 700; }
+  .logo-mark {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+    display: flex; align-items: center; justify-content: center; color: white; font-size: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .logo-text { font-size: 22px; color: var(--ink); }
+  .logo-text .tag { color: var(--primary); }
+
+  /* ====== BUTTONS ====== */
+  .btn {
+    background: var(--primary); color: white;
+    padding: 14px 24px; border-radius: var(--radius-sm);
+    font-weight: 700; font-size: 16px; letter-spacing: 0.01em;
+    transition: transform 0.08s, box-shadow 0.15s, background 0.15s;
+    box-shadow: 0 4px 0 var(--primary-dark), var(--shadow-sm);
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
+  .btn.big { padding: 20px 36px; font-size: 20px; border-radius: 18px; }
+  .btn.secondary {
+    background: var(--surface); color: var(--ink);
+    box-shadow: 0 4px 0 var(--line), var(--shadow-sm);
+  }
+  .btn.secondary:hover { background: var(--surface-soft); }
+  .btn.gold {
+    background: var(--gold); color: var(--ink);
+    box-shadow: 0 4px 0 var(--gold-dark), var(--shadow-sm);
+  }
+  .btn.ghost { background: transparent; color: var(--primary); box-shadow: none; padding: 8px 12px; }
+  .btn.ghost:hover { background: var(--primary-soft); }
+
+  /* ====== SCREEN LAYOUT ====== */
+  .screen { max-width: 1200px; margin: 0 auto; padding: 24px 28px 40px; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .topbar .right { display: flex; align-items: center; gap: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 99px;
+    background: var(--surface); box-shadow: var(--shadow-sm);
+    font-weight: 700; font-size: 14px;
+  }
+  .chip .emoji { font-size: 16px; }
+  .chip.streak { color: #ea580c; }
+  .chip.xp { color: var(--gold-dark); }
+  .icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--surface); display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); font-size: 18px;
+  }
+  .icon-btn:hover { background: var(--surface-soft); }
+
+  /* ====== WELCOME ====== */
+  .welcome { max-width: 540px; margin: 8vh auto; text-align: center; }
+  .welcome .hero {
+    font-size: 80px; margin-bottom: 16px; animation: wave 2.4s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-12deg); }
+    75% { transform: rotate(12deg); }
+  }
+  .welcome h1 { font-size: 44px; margin: 0 0 12px; }
+  .welcome p { color: var(--muted); font-size: 17px; margin: 0 0 28px; }
+  .welcome input {
+    width: 100%; padding: 16px 18px; font-size: 17px; font-family: inherit;
+    border: 2px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); margin-bottom: 14px; text-align: center;
+  }
+  .welcome input:focus { outline: none; border-color: var(--primary); }
+
+  /* ====== HOME ====== */
+  .greet {
+    background: var(--surface); padding: 28px 32px; border-radius: var(--radius);
+    box-shadow: var(--shadow); display: flex; align-items: center; gap: 24px;
+    margin-bottom: 20px;
+  }
+  .greet-emoji { font-size: 56px; }
+  .greet .body { flex: 1; }
+  .greet h1 { margin: 0 0 6px; font-size: 28px; }
+  .greet p { margin: 0; color: var(--muted); font-size: 15px; }
+  .cards-grid {
+    display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
+  }
+  @media (max-width: 760px) { .cards-grid { grid-template-columns: 1fr; } }
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface); padding: 18px; border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm); text-align: center;
+  }
+  .stat-card .emoji { font-size: 28px; }
+  .stat-card .n { font-family: 'Fredoka', sans-serif; font-size: 32px; color: var(--ink); font-weight: 600; }
+  .stat-card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .start-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--coral) 100%);
+    padding: 36px; border-radius: var(--radius);
+    color: white; box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column; gap: 12px; justify-content: space-between;
+    min-height: 220px;
+  }
+  .start-card h2 { margin: 0; font-size: 28px; color: white; }
+  .start-card p { margin: 0; opacity: 0.9; font-size: 15px; }
+  .start-card .btn {
+    align-self: flex-start; background: white; color: var(--primary); box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  }
+  .start-card .btn:hover { background: var(--surface-soft); }
+  .side-card {
+    background: var(--surface); padding: 22px; border-radius: var(--radius);
+    box-shadow: var(--shadow); min-height: 220px;
+    display: flex; flex-direction: column;
+  }
+  .side-card h3 { margin: 0 0 10px; font-size: 18px; }
+  .side-card p { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+  /* ====== PRACTICE ====== */
+  .practice-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 980px) { .practice-grid { grid-template-columns: 1fr; } }
+  .q-card {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 28px 32px; box-shadow: var(--shadow);
+  }
+  .q-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .q-badge {
+    background: var(--primary-soft); color: var(--primary);
+    padding: 6px 14px; border-radius: 99px;
+    font-weight: 800; font-size: 12px; letter-spacing: 0.08em;
+  }
+  .q-stem { font-size: 18px; line-height: 1.55; margin-bottom: 24px; }
+  .q-stem img { max-width: 100%; height: auto; display: block; margin: 16px auto; border-radius: var(--radius-sm); }
+  .q-stem ul { padding-left: 22px; }
+  .q-stem li { margin: 4px 0; }
+
+  /* fractions */
+  .frac {
+    display: inline-flex; flex-direction: column; vertical-align: middle;
+    text-align: center; font-size: 0.9em; margin: 0 2px; line-height: 1;
+  }
+  .frac .top { border-bottom: 1.5px solid currentColor; padding: 0 4px 1px; }
+  .frac .bot { padding: 1px 4px 0; }
+  .mixed { margin-right: 2px; }
+
+  /* choices */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px;
+    background: var(--surface-soft);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    cursor: pointer; transition: all 0.15s;
+    font-size: 16px; font-weight: 600;
+  }
+  .choice:hover { background: var(--primary-soft); transform: translateX(2px); }
+  .choice.selected { background: var(--primary-soft); border-color: var(--primary); }
+  .choice .letter {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .choice.selected .letter { background: var(--primary); color: white; }
+
+  /* fill-in */
+  .fillin { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .fillin input {
+    font-size: 20px; padding: 14px 18px; min-width: 220px;
+    border: 2px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface-soft); font-family: 'Nunito', sans-serif; font-weight: 700;
+  }
+  .fillin input:focus { outline: none; border-color: var(--primary); background: white; }
+  .fillin .unit { color: var(--muted); font-size: 16px; font-weight: 700; }
+  .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .keypad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 14px; max-width: 440px; }
+  .keypad button {
+    padding: 12px 0; background: var(--surface-soft);
+    border: 1.5px solid var(--line); border-radius: 10px;
+    font-size: 16px; font-weight: 700; color: var(--ink);
+  }
+  .keypad button:hover { background: var(--primary-soft); border-color: var(--primary); }
+
+  /* workspace */
+  .workspace { background: var(--surface); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .workspace h3 {
+    margin: 0 0 8px; font-size: 14px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .canvas-tools { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+  .canvas-tools .color {
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent; transition: transform 0.1s;
+  }
+  .canvas-tools .color:hover { transform: scale(1.1); }
+  .canvas-tools .color.active { border-color: var(--ink); }
+  .canvas-tools .tool {
+    padding: 8px 14px; background: var(--surface-soft);
+    border: 1.5px solid var(--line); border-radius: 10px;
+    font-size: 13px; font-weight: 700; color: var(--ink);
+  }
+  .canvas-tools .tool:hover { background: var(--primary-soft); border-color: var(--primary); }
+  .canvas-tools .tool.active { background: var(--ink); color: white; border-color: var(--ink); }
+  canvas.draw {
+    background: #fffef9; border: 2px dashed var(--line);
+    border-radius: var(--radius-sm);
+    width: 100%; height: 480px; touch-action: none; display: block;
+  }
+
+  /* practice nav */
+  .practice-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; margin-top: 20px; flex-wrap: wrap;
+  }
+  .qdots { display: flex; gap: 5px; flex-wrap: wrap; }
+  .qdot {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--surface); box-shadow: var(--shadow-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: var(--muted); cursor: pointer;
+    border: 2px solid transparent; transition: all 0.1s;
+  }
+  .qdot:hover { transform: translateY(-1px); }
+  .qdot.answered { background: var(--primary-soft); color: var(--primary); }
+  .qdot.current { border-color: var(--primary); transform: scale(1.15); }
+
+  /* progress bar */
+  .progress-pill {
+    background: var(--surface); padding: 8px 16px; border-radius: 99px;
+    display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700;
+    box-shadow: var(--shadow-sm); color: var(--muted);
+  }
+  .progress-pill .bar {
+    width: 120px; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden;
+  }
+  .progress-pill .bar > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--coral));
+    width: 0%; transition: width 0.4s cubic-bezier(.2,.8,.2,1);
+    border-radius: 99px;
+  }
+
+  /* ====== RESULTS ====== */
+  .result-hero {
+    background: var(--surface); padding: 40px; border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); text-align: center;
+  }
+  .result-hero .emoji { font-size: 72px; display: block; margin-bottom: 8px; }
+  .result-hero h1 { margin: 0 0 4px; font-size: 34px; }
+  .result-hero .score {
+    font-family: 'Fredoka', sans-serif; font-size: 68px; font-weight: 600;
+    color: var(--primary); margin: 16px 0 8px;
+  }
+  .result-hero .score .total { color: var(--muted); font-size: 40px; }
+  .result-hero p { color: var(--muted); font-size: 16px; margin: 0; }
+
+  .wrong-list { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .wrong-item {
+    background: var(--surface); padding: 18px 20px; border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: all 0.15s;
+    border-left: 5px solid var(--coral);
+  }
+  .wrong-item:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+  .wrong-item .q-num {
+    background: var(--wrong-soft); color: var(--wrong);
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; flex-shrink: 0;
+  }
+  .wrong-item .body { flex: 1; min-width: 0; }
+  .wrong-item .title { font-weight: 700; font-size: 15px; }
+  .wrong-item .preview { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+  .wrong-item .cta { color: var(--primary); font-weight: 700; font-size: 14px; flex-shrink: 0; }
+
+  /* ====== TUTOR ====== */
+  .tutor-screen { max-width: 900px; margin: 0 auto; }
+  .tutor-q-card {
+    background: var(--surface); padding: 22px 26px; border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .tutor-q-card .q-tag { display: inline-block; background: var(--wrong-soft); color: var(--wrong); padding: 4px 12px; border-radius: 99px; font-weight: 800; font-size: 12px; letter-spacing: 0.06em; }
+  .tutor-q-card img { max-width: 100%; height: auto; margin: 10px 0; border-radius: var(--radius-sm); }
+  .chat {
+    background: var(--surface); border-radius: var(--radius); padding: 20px;
+    box-shadow: var(--shadow); height: 520px; display: flex; flex-direction: column;
+  }
+  .messages { flex: 1; overflow-y: auto; padding: 4px 8px 4px 0; }
+  .msg { display: flex; gap: 12px; margin-bottom: 16px; animation: pop 0.3s cubic-bezier(.2,.9,.3,1.4); }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .msg .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700;
+  }
+  .msg.tutor .avatar { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+  .msg.student .avatar { background: linear-gradient(135deg, var(--primary), var(--coral)); color: white; font-family: 'Fredoka', sans-serif; font-size: 15px; }
+  .msg .bubble {
+    background: var(--surface-soft); padding: 14px 18px; border-radius: 18px;
+    max-width: 640px; font-size: 15.5px; line-height: 1.55; white-space: pre-wrap;
+  }
+  .msg.student .bubble { background: var(--primary-soft); }
+  .chat-input { display: flex; gap: 10px; margin-top: 16px; align-items: flex-end; }
+  .chat-input textarea {
+    flex: 1; padding: 14px 16px; font-size: 15px; font-family: inherit;
+    border: 2px solid var(--line); border-radius: 14px; background: var(--surface-soft); resize: none;
+  }
+  .chat-input textarea:focus { outline: none; border-color: var(--primary); background: white; }
+  .thinking { color: var(--muted); font-style: italic; font-size: 14px; margin-left: 52px; }
+  .thinking::after {
+    content: ''; display: inline-block; width: 14px;
+    animation: dots 1.2s infinite steps(4, end);
+  }
+  @keyframes dots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
+
+  /* ====== SETTINGS MODAL ====== */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(30,17,64,0.4); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100;
+    animation: fade 0.2s;
+  }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface); padding: 32px; border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); max-width: 480px; width: 100%;
+  }
+  .modal h2 { margin: 0 0 6px; font-size: 24px; }
+  .modal p { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+  .modal label { display: block; font-weight: 800; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .modal input {
+    width: 100%; padding: 12px 14px; font-size: 15px; font-family: inherit;
+    border: 2px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-soft); margin-bottom: 14px;
+  }
+  .modal input:focus { outline: none; border-color: var(--primary); background: white; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+  .error-banner {
+    background: var(--wrong-soft); color: var(--wrong);
+    padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
+    margin: 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- WELCOME SCREEN                                                -->
+<!-- ============================================================ -->
+<section id="welcome-screen" class="screen welcome">
+  <div class="hero">🎟️</div>
+  <h1>Welcome to Hall Pass</h1>
+  <p>Grade 5 NYS math practice, built just for you. Crush 28 problems. Learn from any you miss with a cool math coach — no answer spoilers, only smart questions.</p>
+  <input type="text" id="name-input" placeholder="What's your name?" autocomplete="off" maxlength="24" />
+  <button class="btn big" id="welcome-btn">Let's go →</button>
+</section>
+
+<!-- ============================================================ -->
+<!-- HOME SCREEN                                                   -->
+<!-- ============================================================ -->
+<div id="home-screen" class="screen hidden">
+  <div class="topbar">
+    <div class="logo"><div class="logo-mark">🎟️</div><div class="logo-text">Hall <span class="tag">Pass</span></div></div>
+    <div class="right">
+      <div class="chip streak"><span class="emoji">🔥</span> <span id="home-streak">0</span> streak</div>
+      <div class="chip xp"><span class="emoji">⭐</span> <span id="home-xp">0</span> XP</div>
+      <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
+    </div>
+  </div>
+
+  <div class="greet">
+    <div class="greet-emoji">👋</div>
+    <div class="body">
+      <h1 id="home-greet-title">Hey!</h1>
+      <p id="home-greet-sub">Ready to sharpen your math skills?</p>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="emoji">📝</div><div class="n">28</div><div class="label">Questions</div></div>
+    <div class="stat-card"><div class="emoji">🎯</div><div class="n" id="home-best">—</div><div class="label">Best score</div></div>
+    <div class="stat-card"><div class="emoji">🏆</div><div class="n" id="home-attempts">0</div><div class="label">Attempts</div></div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="start-card">
+      <div>
+        <h2 id="home-cta-title">Start a new practice test</h2>
+        <p>28 questions from the 2025 NYS Grade 5 Math exam. Take your time — show your work.</p>
+      </div>
+      <button class="btn big" id="start-practice-btn">Start practice</button>
+    </div>
+    <div class="side-card">
+      <h3>🦉 How this works</h3>
+      <p>Finish the test, then click any question you missed. Professor Hoot will help you figure it out — but only by asking questions. No answers handed out.</p>
+      <button class="btn ghost" id="how-btn" style="align-self:flex-start">What's Bloom's?</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PRACTICE SCREEN                                               -->
+<!-- ============================================================ -->
+<div id="practice-screen" class="screen hidden">
+  <div class="topbar">
+    <div class="logo"><div class="logo-mark">🎟️</div><div class="logo-text">Hall <span class="tag">Pass</span></div></div>
+    <div class="right">
+      <div class="progress-pill"><span id="progress-text">1/28</span><span class="bar"><span id="progress-fill"></span></span></div>
+      <button class="btn secondary" id="exit-practice-btn">Exit</button>
+    </div>
+  </div>
+
+  <div class="practice-grid">
+    <div class="q-card">
+      <div class="q-head"><span class="q-badge" id="q-badge">Question 1</span></div>
+      <div class="q-stem" id="q-stem"></div>
+      <div id="q-input"></div>
+    </div>
+    <div class="workspace">
+      <h3>✏️ Show your work</h3>
+      <div class="canvas-tools">
+        <button class="tool active" data-tool="pen">Pen</button>
+        <button class="tool" data-tool="eraser">Eraser</button>
+        <span style="width:6px"></span>
+        <div class="color active" style="background:#1e1140" data-color="#1e1140"></div>
+        <div class="color" style="background:#6c5ce7" data-color="#6c5ce7"></div>
+        <div class="color" style="background:#ef4444" data-color="#ef4444"></div>
+        <div class="color" style="background:#10b981" data-color="#10b981"></div>
+        <span style="flex:1"></span>
+        <button class="tool" id="undo-btn">↶ Undo</button>
+        <button class="tool" id="clear-btn">Clear</button>
+      </div>
+      <canvas class="draw" id="work-canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="practice-nav">
+    <button class="btn secondary" id="prev-btn">← Back</button>
+    <div class="qdots" id="qdots"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn secondary" id="next-btn">Next →</button>
+      <button class="btn gold" id="submit-btn">Submit 🏁</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- RESULTS SCREEN                                                -->
+<!-- ============================================================ -->
+<div id="results-screen" class="screen hidden">
+  <div class="topbar">
+    <div class="logo"><div class="logo-mark">🎟️</div><div class="logo-text">Hall <span class="tag">Pass</span></div></div>
+    <div class="right">
+      <button class="btn secondary" id="home-btn">← Home</button>
+    </div>
+  </div>
+  <div class="result-hero">
+    <span class="emoji" id="result-emoji">🎉</span>
+    <h1 id="result-title">Nice work!</h1>
+    <div class="score"><span id="score-correct">0</span><span class="total">/28</span></div>
+    <p id="result-sub">Tap any question below to start a tutoring session. Remember — Professor Hoot won't give you the answer. He'll guide you to find it yourself.</p>
+  </div>
+  <div class="wrong-list" id="wrong-list"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TUTOR SCREEN                                                  -->
+<!-- ============================================================ -->
+<div id="tutor-screen" class="screen hidden tutor-screen">
+  <div class="topbar">
+    <div class="logo"><div class="logo-mark">🎟️</div><div class="logo-text">Tutor <span class="tag">Session</span></div></div>
+    <button class="btn secondary" id="tutor-back-btn">← Back</button>
+  </div>
+  <div class="tutor-q-card" id="tutor-q"></div>
+  <div class="chat">
+    <div class="messages" id="messages"></div>
+    <div id="tutor-error"></div>
+    <div class="chat-input">
+      <textarea id="chat-input" rows="2" placeholder="Type what you're thinking... (press Enter to send)"></textarea>
+      <button class="btn" id="send-btn">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SETTINGS MODAL                                                -->
+<!-- ============================================================ -->
+<div id="settings-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>⚙️ Settings</h2>
+    <p>Hey, parent! The tutor needs an AI/ML API key (from aimlapi.com) to connect to Gemini 2.5 Flash. The key is stored only on this device.</p>
+
+    <label>Your name</label>
+    <input type="text" id="settings-name" placeholder="Your name" />
+
+    <label>AI/ML API key</label>
+    <input type="password" id="settings-key" placeholder="your-aimlapi-key" autocomplete="off" />
+
+    <label>Model (advanced)</label>
+    <input type="text" id="settings-model" placeholder="google/gemini-2.5-flash" />
+
+    <div id="settings-error"></div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="settings-reset">Reset progress</button>
+      <button class="btn secondary" id="settings-cancel">Cancel</button>
+      <button class="btn" id="settings-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK
+// ============================================================
+const FIG = (n) => `figures/q${n}.png`;
+const f = (n, d) => `<span class="frac"><span class="top">${n}</span><span class="bot">${d}</span></span>`;
+const mf = (w, n, d) => `<span class="mixed">${w}</span>${f(n,d)}`;
+
+const QUESTIONS = [
+  { id: 3, type: 'mc', stem: `What is the quotient of 2,550 &divide; 25?`,
+    choices: ['100','102','105','120'] },
+  { id: 5, type: 'mc', stem: `Which number has a 2 in the tens place?`,
+    choices: ['0.26','2.09','3.726','425.9'] },
+  { id: 9, type: 'mc', stem: `Which expression is equivalent to ${f(3,4)} &times; 7?`,
+    choices: ['3 × 4 ÷ 7','3 × 7 ÷ 4','3 ÷ 4 ÷ 7','3 × 7 × 4'] },
+  { id: 10, type: 'mc',
+    stem: `The first layer of a right rectangular prism is shown below. Each small cube has a volume of 1 cubic unit.<img src="${FIG(10)}" alt="first layer of prism" />The height of the entire right rectangular prism is 6 unit cubes. What is the volume, in cubic units, of this prism?`,
+    choices: ['15','23','60','90'] },
+  { id: 11, type: 'mc',
+    stem: `A baker has ${f(1,4)} of a box of muffin mix. He pours all the muffin mix equally into 3 bowls. What fraction of the whole box of muffin mix is in each bowl?`,
+    choices: [f(1,12), f(3,4), mf(2,3,4), mf(3,1,4)] },
+  { id: 13, type: 'mc',
+    stem: `Jamie has aquarium rocks that come in bags that weigh ${mf(2,2,5)} pounds each. She has ${mf(1,1,2)} bags of rocks. What is the total weight, in pounds, of the aquarium rocks that Jamie has?`,
+    choices: [mf(1,3,5), mf(3,3,7), mf(3,3,5), mf(3,9,10)] },
+  { id: 14, type: 'mc', stem: `What is the value of ${f(34,100)} + ${f(2,10)}?`,
+    choices: [f(54,100), f(54,10), f(36,100), f(36,10)] },
+  { id: 15, type: 'mc', stem: `Which shape always has four sides of equal length?`,
+    choices: ['rectangle','rhombus','parallelogram','trapezoid'] },
+  { id: 20, type: 'mc', stem: `What is 63.4368 rounded to the nearest hundredth?`,
+    choices: ['63.4','63.43','63.44','63.437'] },
+  { id: 24, type: 'mc',
+    stem: `A container had 1 liter of water. Exactly 800 milliliters of the water were removed from the container. Which picture shows the amount of water remaining in the container?<img src="${FIG(24)}" alt="four beakers" />`,
+    choices: ['Beaker A','Beaker B','Beaker C','Beaker D'] },
+  { id: 25, type: 'mc',
+    stem: `Lori uses 12 pounds of turkey to make 60 sandwiches. Each sandwich has the same amount of turkey. What is the total amount of turkey in each sandwich?`,
+    choices: [`${f(1,6)} pound`, `${f(1,5)} pound`, '5 pounds','6 pounds'] },
+  { id: 26, type: 'mc',
+    stem: `Sheri walks ${mf(1,1,3)} miles to the store. From the store she walks ${f(2,5)} of a mile to a friend&rsquo;s house. What is the total distance, in miles, that Sheri walks?`,
+    choices: [f(8,15), f(6,8), mf(1,3,8), mf(1,11,15)] },
+  { id: 28, type: 'mc',
+    stem: `In which number does the digit 6 represent a value that is one tenth the value represented by the digit 6 in the number 506.42?`,
+    choices: ['504.26','540.62','560.42','604.25'] },
+  { id: 29, type: 'mc',
+    stem: `The figure shown below is made of unit cubes. The bottom layer of the figure is identical to the top layer.<img src="${FIG(29)}" alt="figure of unit cubes" />What is the volume, in cubic units, of the figure?`,
+    choices: ['16','20','24','30'] },
+  { id: 31, type: 'mc',
+    stem: `A company owner spends $1,488 for tickets to a baseball game. The price of each ticket is $24. How many tickets does the company owner buy?`,
+    choices: ['62','68','74','75'] },
+  { id: 32, type: 'mc',
+    stem: `An art teacher makes green paint by combining 2 quarts of yellow paint and 3 pints of blue paint. How much green paint, in cups, does the art teacher make?`,
+    choices: ['7','10','14','20'] },
+  { id: 33, type: 'mc',
+    stem: `Which expression is equivalent to ${mf(1,5,14)} &minus; ${f(3,4)}?`,
+    choices: [
+      `${f(15,14)} − ${f(13,14)}`,
+      `${f(33,28)} − ${f(3,28)}`,
+      `${f(38,28)} − ${f(21,28)}`,
+      `${f(19,56)} − ${f(3,56)}`
+    ] },
+  { id: 34, type: 'mc',
+    stem: `Jaylah is buying her favorite candy at a store. The cost for each piece of candy is $0.63. Jaylah buys 5 pieces of candy. She pays with a $5.00 bill. What is the total amount of money she should get in change?`,
+    choices: ['$1.55','$1.85','$3.05','$3.15'] },
+  { id: 35, type: 'mc', stem: `Which statement about parallelograms is true?`,
+    choices: ['All parallelograms are squares.','All parallelograms are rectangles.','All parallelograms are rhombuses.','All parallelograms are quadrilaterals.'] },
+  { id: 36, type: 'fill',
+    stem: `<strong>1 credit.</strong> A right rectangular prism is shown below.<img src="${FIG(36)}" alt="rectangular prism" />The volume of the prism is 90 cubic feet. What is the width, <em>w</em>, in feet, of the prism?`,
+    unit: 'feet', hint: 'Just type the number.' },
+  { id: 37, type: 'fill',
+    stem: `<strong>1 credit.</strong> Last week, Nancy hiked ${mf(7,3,4)} miles. This week, she swam ${f(2,3)} the distance she hiked last week. How many miles did Nancy swim this week?`,
+    unit: 'miles', hint: 'You can type a fraction like 5 1/6 or 31/6.' },
+  { id: 38, type: 'fill',
+    stem: `<strong>1 credit.</strong> Leia has 5 pounds of chocolate that she will put into bags. She puts ${f(1,3)} pound of the chocolate into each bag. Into how many bags does Leia put the chocolate?`,
+    unit: 'bags', hint: 'Whole number.' },
+  { id: 39, type: 'fill',
+    stem: `<strong>2 credits.</strong> A diagram of a rectangle with given dimensions is shown below.<img src="${FIG(39)}" alt="rectangle with dimensions" />What is the area, in square feet, of the rectangle? Show your work on the right.`,
+    unit: 'square feet', hint: 'Type a fraction like 4 1/8 or 33/8.' },
+  { id: 40, type: 'fill',
+    stem: `<strong>2 credits.</strong> Write a comparison statement using &gt;, &lt;, or = that shows the relationship between 157.890 and 157.809. Explain your reasoning on the right.`,
+    unit: '', placeholder: '157.890 ? 157.809', hint: 'Type the full statement, like: 157.890 > 157.809' },
+  { id: 41, type: 'fill',
+    stem: `<strong>2 credits.</strong> Two right rectangular prisms were combined to make the figure shown below.<img src="${FIG(41)}" alt="L-shaped prism figure" />What is the total volume, in cubic centimeters, of the figure? Show your work on the right.`,
+    unit: 'cubic centimeters', hint: 'Whole number.' },
+  { id: 42, type: 'fill',
+    stem: `<strong>2 credits.</strong> A teacher writes the equation 6 &times; ${f(3,3)} = 6 on the board. A student says the equation is wrong because multiplying 6 by a fraction results in a product that is less than 6. Is the student correct? Explain your reasoning.`,
+    unit: '', placeholder: 'Yes or no, then explain', hint: 'Write "yes" or "no" and then your reasoning.' },
+  { id: 43, type: 'fill',
+    stem: `<strong>2 credits.</strong> The Science Club tests paper airplane designs by measuring how far they fly.<img src="${FIG(43)}" alt="line plot" />What is the difference, in yards, between the longest and shortest flights? Show your work on the right.`,
+    unit: 'yards', hint: 'Type a fraction like 2 1/4.' },
+  { id: 44, type: 'fill',
+    stem: `<strong>3 credits.</strong> Josh is training for a race.<ul><li>Josh runs 12.35 miles in March.</li><li>Josh runs 3 times as many miles in April as in March.</li><li>Josh runs 43.1 more miles in May than he ran in March.</li></ul>What is the total number of miles Josh runs for these three months? Show your work on the right.`,
+    unit: 'miles', hint: 'Decimal answer.' },
+];
+
+const ANSWERS = {
+  3: 'B', 5: 'D', 9: 'B', 10: 'D', 11: 'A', 13: 'C', 14: 'A', 15: 'B',
+  20: 'C', 24: 'A', 25: 'B', 26: 'D', 28: 'B', 29: 'A',
+  31: 'A', 32: 'C', 33: 'C', 34: 'B', 35: 'D',
+  36: ['5','5 feet','5.0'],
+  37: ['5 1/6','31/6','5 1/6 miles','5.1666666666666'],
+  38: ['15','15 bags'],
+  39: ['4 1/8','33/8','4.125','4 1/8 square feet'],
+  40: ['157.890 > 157.809','>','157.89 > 157.809','157.890>157.809'],
+  41: ['216','216 cubic centimeters','216 cm^3'],
+  42: ['no'],
+  43: ['2 1/4','9/4','2.25'],
+  44: ['104.85','104.85 miles']
+};
+
+function isCorrect(qid, answer) {
+  const a = ANSWERS[qid];
+  if (!a) return false;
+  if (typeof a === 'string' && a.length === 1) return (answer || '').toUpperCase().trim() === a;
+  if (Array.isArray(a)) {
+    const norm = (s) => (s || '').toString().toLowerCase().replace(/\s+/g,' ').trim();
+    const ans = norm(answer);
+    if (!ans) return false;
+    return a.some(x => norm(x) === ans || ans.includes(norm(x)));
+  }
+  return false;
+}
+
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const KEY = 'hallpass_v1';
+const STATE = {
+  name: '',
+  apiKey: '',
+  model: 'google/gemini-2.5-flash',
+  streak: 0, xp: 0, attempts: 0, bestScore: null,
+  idx: 0,
+  answers: {},
+  canvases: {},
+  wrongList: [],
+  tutor: { qid: null, history: [] }
+};
+
+function save() {
+  try {
+    const slim = { ...STATE };
+    delete slim.tutor;
+    localStorage.setItem(KEY, JSON.stringify(slim));
+  } catch(e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return false;
+    Object.assign(STATE, JSON.parse(raw));
+    return true;
+  } catch(e) { return false; }
+}
+load();
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const SCREENS = ['welcome-screen','home-screen','practice-screen','results-screen','tutor-screen'];
+function showScreen(id) {
+  SCREENS.forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+  window.scrollTo(0,0);
+}
+
+// Initial routing
+if (STATE.name) {
+  showScreen('home-screen');
+  refreshHome();
+} else {
+  showScreen('welcome-screen');
+}
+
+// Welcome
+document.getElementById('welcome-btn').addEventListener('click', () => {
+  const name = document.getElementById('name-input').value.trim();
+  if (!name) return;
+  STATE.name = name;
+  save();
+  refreshHome();
+  showScreen('home-screen');
+});
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('welcome-btn').click();
+});
+
+// Home
+function refreshHome() {
+  document.getElementById('home-streak').textContent = STATE.streak || 0;
+  document.getElementById('home-xp').textContent = STATE.xp || 0;
+  document.getElementById('home-attempts').textContent = STATE.attempts || 0;
+  document.getElementById('home-best').textContent = STATE.bestScore == null ? '—' : STATE.bestScore + '/28';
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Hey' : 'Good evening';
+  document.getElementById('home-greet-title').textContent = `${greeting}, ${STATE.name}!`;
+  document.getElementById('home-greet-sub').textContent = STATE.attempts > 0
+    ? 'Every try gets you sharper. Let\'s do another round.'
+    : 'Ready to sharpen your math skills?';
+  document.getElementById('home-cta-title').textContent = STATE.attempts > 0 ? 'Try again and beat your score' : 'Start a new practice test';
+}
+document.getElementById('start-practice-btn').addEventListener('click', () => {
+  STATE.idx = 0;
+  STATE.answers = {};
+  STATE.canvases = {};
+  STATE.wrongList = [];
+  save();
+  showScreen('practice-screen');
+  renderDots();
+  renderQuestion();
+  setupCanvas();
+});
+document.getElementById('how-btn').addEventListener('click', () => {
+  alert(`Bloom's Taxonomy is a ladder of thinking skills:\n\n1. Remember — facts, names, rules\n2. Understand — what it means in your own words\n3. Apply — use it in a new situation\n4. Analyze — break a problem into parts\n5. Evaluate — judge if an answer makes sense\n6. Create — make your own problem\n\nProfessor Hoot starts low and climbs the ladder based on how you're doing. No shortcuts, just smart questions.`);
+});
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('home-btn').addEventListener('click', () => { refreshHome(); showScreen('home-screen'); });
+document.getElementById('exit-practice-btn').addEventListener('click', () => {
+  saveCurrentCanvas();
+  if (confirm('Pause this test? Your progress is saved.')) { refreshHome(); showScreen('home-screen'); }
+});
+
+// ============================================================
+// PRACTICE
+// ============================================================
+function renderDots() {
+  const dots = document.getElementById('qdots');
+  dots.innerHTML = '';
+  QUESTIONS.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'qdot' + (STATE.answers[q.id] !== undefined && STATE.answers[q.id] !== '' ? ' answered' : '') + (i === STATE.idx ? ' current' : '');
+    d.textContent = q.id;
+    d.addEventListener('click', () => { saveCurrentCanvas(); STATE.idx = i; renderQuestion(); });
+    dots.appendChild(d);
+  });
+}
+function renderQuestion() {
+  const q = QUESTIONS[STATE.idx];
+  document.getElementById('q-badge').textContent = `Question ${STATE.idx+1} of ${QUESTIONS.length}`;
+  document.getElementById('q-stem').innerHTML = q.stem;
+  document.getElementById('progress-text').textContent = `${STATE.idx+1}/${QUESTIONS.length}`;
+  document.getElementById('progress-fill').style.width = `${((STATE.idx+1)/QUESTIONS.length)*100}%`;
+
+  const input = document.getElementById('q-input');
+  input.innerHTML = '';
+
+  if (q.type === 'mc') {
+    const wrap = document.createElement('div');
+    wrap.className = 'choices';
+    ['A','B','C','D'].forEach((letter, i) => {
+      const el = document.createElement('div');
+      el.className = 'choice' + (STATE.answers[q.id] === letter ? ' selected' : '');
+      el.innerHTML = `<div class="letter">${letter}</div><div class="text">${q.choices[i]}</div>`;
+      el.addEventListener('click', () => {
+        STATE.answers[q.id] = letter;
+        save();
+        renderQuestion(); renderDots();
+      });
+      wrap.appendChild(el);
+    });
+    input.appendChild(wrap);
+  } else if (q.type === 'fill') {
+    input.innerHTML = `
+      <div class="fillin">
+        <input type="text" id="fillin-box" placeholder="${q.placeholder || 'Type your answer'}" value="${STATE.answers[q.id] || ''}" />
+        <span class="unit">${q.unit || ''}</span>
+      </div>
+      <div class="hint">${q.hint || ''}</div>
+      <div class="keypad">
+        <button data-ins="1/2">½</button><button data-ins="1/3">⅓</button><button data-ins="1/4">¼</button>
+        <button data-ins="2/3">⅔</button><button data-ins="3/4">¾</button><button data-ins="/">/</button>
+        <button data-ins="1/5">⅕</button><button data-ins="1/6">⅙</button><button data-ins="1/8">⅛</button>
+        <button data-ins=".">.</button><button data-ins=" ">space</button><button data-ins="BS">⌫</button>
+      </div>`;
+    const box = document.getElementById('fillin-box');
+    box.addEventListener('input', () => { STATE.answers[q.id] = box.value; save(); renderDots(); });
+    document.querySelectorAll('.keypad button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.ins;
+        if (v === 'BS') box.value = box.value.slice(0, -1);
+        else box.value += v;
+        box.dispatchEvent(new Event('input'));
+        box.focus();
+      });
+    });
+  }
+
+  setTimeout(loadCurrentCanvas, 20);
+}
+document.getElementById('prev-btn').addEventListener('click', () => {
+  if (STATE.idx > 0) { saveCurrentCanvas(); STATE.idx--; renderQuestion(); renderDots(); }
+});
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (STATE.idx < QUESTIONS.length-1) { saveCurrentCanvas(); STATE.idx++; renderQuestion(); renderDots(); }
+});
+document.getElementById('submit-btn').addEventListener('click', () => {
+  saveCurrentCanvas();
+  const unanswered = QUESTIONS.filter(q => !STATE.answers[q.id]);
+  if (unanswered.length > 0) {
+    if (!confirm(`You haven't answered ${unanswered.length} question${unanswered.length>1?'s':''}. Submit anyway?`)) return;
+  }
+  grade();
+  showResults();
+});
+
+// ============================================================
+// CANVAS
+// ============================================================
+let canvas, ctx, drawing = false, currentColor = '#1e1140', currentTool = 'pen';
+let strokeHistory = [];
+function setupCanvas() {
+  canvas = document.getElementById('work-canvas');
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const start = (e) => {
+    drawing = true;
+    const pt = getPoint(e);
+    strokeHistory.push({ color: currentColor, tool: currentTool, points: [pt] });
+  };
+  const move = (e) => {
+    if (!drawing) return;
+    e.preventDefault();
+    const pt = getPoint(e);
+    const last = strokeHistory[strokeHistory.length - 1];
+    if (last) {
+      last.points.push(pt);
+      drawLastStroke();
+    }
+  };
+  const end = () => { if (drawing) { drawing = false; saveCurrentCanvas(); } };
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end);
+
+  document.querySelectorAll('.canvas-tools .tool[data-tool]').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.canvas-tools .tool[data-tool]').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      currentTool = t.dataset.tool;
+    });
+  });
+  document.querySelectorAll('.canvas-tools .color').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.canvas-tools .color').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      currentColor = c.dataset.color;
+      currentTool = 'pen';
+      document.querySelectorAll('.canvas-tools .tool[data-tool]').forEach(x => x.classList.toggle('active', x.dataset.tool === 'pen'));
+    });
+  });
+  document.getElementById('clear-btn').addEventListener('click', () => {
+    strokeHistory = []; redrawStrokes(); saveCurrentCanvas();
+  });
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    strokeHistory.pop(); redrawStrokes(); saveCurrentCanvas();
+  });
+}
+function resizeCanvas() {
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  redrawStrokes();
+}
+function getPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+}
+function drawLastStroke() {
+  const s = strokeHistory[strokeHistory.length - 1];
+  if (!s || s.points.length < 2) return;
+  ctx.lineWidth = s.tool === 'eraser' ? 22 : 2.5;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = s.tool === 'eraser' ? '#fffef9' : s.color;
+  ctx.beginPath();
+  const p1 = s.points[s.points.length - 2];
+  const p2 = s.points[s.points.length - 1];
+  ctx.moveTo(p1.x, p1.y);
+  ctx.lineTo(p2.x, p2.y);
+  ctx.stroke();
+}
+function redrawStrokes() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  strokeHistory.forEach(s => {
+    if (s.points.length < 2) return;
+    ctx.beginPath();
+    ctx.lineWidth = s.tool === 'eraser' ? 22 : 2.5;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = s.tool === 'eraser' ? '#fffef9' : s.color;
+    s.points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+  });
+}
+function saveCurrentCanvas() {
+  if (!canvas) return;
+  const q = QUESTIONS[STATE.idx];
+  STATE.canvases[q.id] = { strokes: strokeHistory };
+  save();
+}
+function loadCurrentCanvas() {
+  if (!canvas) return;
+  const q = QUESTIONS[STATE.idx];
+  const data = STATE.canvases[q.id];
+  strokeHistory = (data && data.strokes) ? data.strokes : [];
+  redrawStrokes();
+}
+
+// ============================================================
+// GRADE & RESULTS
+// ============================================================
+function grade() {
+  STATE.wrongList = [];
+  QUESTIONS.forEach(q => { if (!isCorrect(q.id, STATE.answers[q.id])) STATE.wrongList.push(q.id); });
+  const correct = QUESTIONS.length - STATE.wrongList.length;
+  STATE.attempts = (STATE.attempts || 0) + 1;
+  if (STATE.bestScore == null || correct > STATE.bestScore) STATE.bestScore = correct;
+  STATE.xp = (STATE.xp || 0) + correct * 10;
+  STATE.streak = correct >= QUESTIONS.length * 0.7 ? (STATE.streak || 0) + 1 : 0;
+  save();
+}
+function showResults() {
+  showScreen('results-screen');
+  const correct = QUESTIONS.length - STATE.wrongList.length;
+  document.getElementById('score-correct').textContent = correct;
+  const pct = correct / QUESTIONS.length;
+  const emoji = pct === 1 ? '🏆' : pct >= 0.85 ? '🎉' : pct >= 0.7 ? '🌟' : pct >= 0.5 ? '💪' : '🤔';
+  const title = pct === 1 ? 'PERFECT SCORE! 🔥' : pct >= 0.85 ? 'Amazing work!' : pct >= 0.7 ? 'Great job!' : pct >= 0.5 ? 'Solid effort — let\'s sharpen up!' : 'Every miss is a lesson. Let\'s learn!';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = STATE.wrongList.length === 0
+    ? 'You got every one right. Hall pass earned. 🎟️'
+    : `Tap any question below to chat with Professor Hoot. He won't give you the answer — he'll help you figure it out.`;
+
+  if (pct >= 0.85 && typeof confetti === 'function') {
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.3 }, colors: ['#6c5ce7','#fcd34d','#ff6b8b','#22d3ee','#10b981'] });
+  }
+
+  const list = document.getElementById('wrong-list');
+  list.innerHTML = '';
+  STATE.wrongList.forEach(qid => {
+    const q = QUESTIONS.find(x => x.id === qid);
+    const plain = q.stem.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    const item = document.createElement('div');
+    item.className = 'wrong-item';
+    item.innerHTML = `
+      <div class="q-num">${q.id}</div>
+      <div class="body">
+        <div class="title">Question ${q.id}</div>
+        <div class="preview">${plain.slice(0, 100)}${plain.length > 100 ? '…' : ''}</div>
+      </div>
+      <div class="cta">Get help →</div>`;
+    item.addEventListener('click', () => openTutor(qid));
+    list.appendChild(item);
+  });
+}
+
+// ============================================================
+// TUTOR — AI/ML API → Gemini 2.5 Flash
+// ============================================================
+function openTutor(qid) {
+  STATE.tutor = { qid, history: [] };
+  const q = QUESTIONS.find(x => x.id === qid);
+  document.getElementById('tutor-q').innerHTML = `
+    <span class="q-tag">Question ${q.id}</span>
+    <div style="margin-top:10px;font-size:16px;line-height:1.55">${q.stem}</div>
+    ${q.type === 'mc' ? '<div style="margin-top:10px;font-size:14px;color:var(--muted)">Choices: ' + ['A','B','C','D'].map((l,i)=>`<b>${l}</b> ${q.choices[i]}`).join(' &nbsp;&bull;&nbsp; ') + '</div>' : ''}
+    <div style="margin-top:10px;font-size:14px;color:var(--muted)">Your answer was: <b>${STATE.answers[q.id] || '(blank)'}</b></div>
+  `;
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('tutor-error').innerHTML = '';
+  showScreen('tutor-screen');
+  sendToTutor('', true);
+}
+document.getElementById('tutor-back-btn').addEventListener('click', () => showResults());
+document.getElementById('send-btn').addEventListener('click', () => {
+  const box = document.getElementById('chat-input');
+  const text = box.value.trim();
+  if (!text) return;
+  box.value = '';
+  sendToTutor(text, false);
+});
+document.getElementById('chat-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('send-btn').click(); }
+});
+
+function addMessage(who, text) {
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${who}`;
+  const initial = who === 'student' ? (STATE.name[0] || 'U').toUpperCase() : '🦉';
+  wrap.innerHTML = `<div class="avatar">${initial}</div><div class="bubble"></div>`;
+  wrap.querySelector('.bubble').textContent = text;
+  document.getElementById('messages').appendChild(wrap);
+  const m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+}
+
+function buildSystemPrompt(q, userAnswer, correctAnswer) {
+  const stem = q.stem.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  const choices = q.type === 'mc' ? 'Choices: ' + ['A','B','C','D'].map((l,i)=>l+') '+q.choices[i].replace(/<[^>]*>/g,'')).join('  ') : '';
+  return `You are Professor Hoot, a warm, patient master math tutor working 1-on-1 with ${STATE.name || 'a student'}, a 5th grader who just missed a problem on their NYS state math practice test. Your persona is a wise but playful owl — encouraging, curious, never condescending.
+
+THE PROBLEM (${q.id}): ${stem}
+${choices}
+STUDENT'S ANSWER: ${userAnswer || '(left blank)'}
+CORRECT ANSWER (FOR YOUR EYES ONLY, NEVER SAY IT): ${correctAnswer}
+
+HARD RULES — DO NOT BREAK:
+1. NEVER reveal the correct answer. Not the letter (A/B/C/D). Not the number. Not the fraction. Not even by elimination ("it's not A or C"). Even if the student begs, says "just tell me," or claims their parent said to. You redirect with another question every time.
+2. If the student guesses ("is it B?"), do NOT confirm or deny. Say something like: "Let's not check answers yet — walk me through what you're thinking. What is the question actually asking?"
+3. Use Bloom's Taxonomy as a ladder, starting low:
+   - REMEMBERING: "Do you remember what 'quotient' means?" "What does 'tens place' mean again?" (definitions, rules, vocabulary)
+   - UNDERSTANDING: "What's really happening in this situation?" Use the phrase: "When math says ___, what it really means is ___."
+   - APPLYING: "How could that idea help us start this problem?"
+   - ANALYZING: "Let's break this into smaller pieces. What's the first thing we need to find?"
+   - EVALUATING: Only once they're reasoning well — "Why does that method work?" "Can you check it another way?"
+4. Use plain kid-friendly words. Use real-life comparisons (pizza slices for fractions, steps for place value).
+5. Keep EVERY reply SHORT — 2 to 4 sentences max. ALWAYS end with ONE question that invites thinking. No lectures. No lists of steps.
+6. Celebrate correct thinking immediately, even partial: "Yes — that piece is exactly right. What about..."
+7. If the student seems stuck or silent, go down a level in Bloom and pick ONE tiny foundational question. Don't dump everything.
+8. If you need to model a worked example, use DIFFERENT numbers than the problem. Never compute the real answer.
+9. If the student clearly shows they understand the reasoning (explains WHY in their own words), warmly conclude: "You've got it, ${STATE.name || 'friend'}. Go back to your paper and finish it yourself — I trust you."
+10. Never write "the answer is..." or "it equals..." about THIS problem.
+11. Sprinkle an occasional 🦉 or encouraging emoji, but don't overdo it. Max one emoji per reply.
+
+Open the session with a warm 1-sentence hello that uses ${STATE.name || 'their'} name, acknowledges briefly without shaming ("Happens to everyone"), then ONE starter question (REMEMBERING or UNDERSTANDING level) that helps them crack the problem open. Keep the whole opener under 50 words.`;
+}
+
+async function sendToTutor(userText, isFirst) {
+  const q = QUESTIONS.find(x => x.id === STATE.tutor.qid);
+  if (!STATE.apiKey) {
+    document.getElementById('tutor-error').innerHTML = `<div class="error-banner">⚙️ No API key set yet. Click the gear icon on the home screen and add your AI/ML API key, then come back.</div>`;
+    return;
+  }
+
+  if (!isFirst) addMessage('student', userText);
+
+  const sys = buildSystemPrompt(q, STATE.answers[q.id], ANSWERS[q.id]);
+  const messages = [
+    { role: 'system', content: sys },
+    ...STATE.tutor.history,
+    ...(isFirst ? [{ role: 'user', content: '(Please begin the tutoring session now — greet me and ask your first question.)' }] : [{ role: 'user', content: userText }])
+  ];
+
+  const thinkEl = document.createElement('div');
+  thinkEl.className = 'thinking';
+  thinkEl.textContent = 'Professor Hoot is thinking';
+  document.getElementById('messages').appendChild(thinkEl);
+
+  try {
+    const res = await fetch('https://api.aimlapi.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STATE.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: STATE.model || 'google/gemini-2.5-flash',
+        messages,
+        max_tokens: 400,
+        temperature: 0.7
+      })
+    });
+    thinkEl.remove();
+    if (!res.ok) {
+      const t = await res.text();
+      document.getElementById('tutor-error').innerHTML = `<div class="error-banner">Tutor error (${res.status}). ${t.slice(0,260)}</div>`;
+      return;
+    }
+    const data = await res.json();
+    const reply = ((data.choices || [])[0]?.message?.content || '').trim();
+    if (!reply) {
+      document.getElementById('tutor-error').innerHTML = `<div class="error-banner">Empty reply from tutor. Try sending your message again.</div>`;
+      return;
+    }
+    addMessage('tutor', reply);
+    if (isFirst) {
+      STATE.tutor.history = [
+        { role: 'user', content: '(Please begin the tutoring session now — greet me and ask your first question.)' },
+        { role: 'assistant', content: reply }
+      ];
+    } else {
+      STATE.tutor.history.push({ role: 'user', content: userText });
+      STATE.tutor.history.push({ role: 'assistant', content: reply });
+    }
+  } catch (e) {
+    thinkEl.remove();
+    document.getElementById('tutor-error').innerHTML = `<div class="error-banner">Can't reach the tutor: ${e.message}. Check your internet and API key.</div>`;
+  }
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function openSettings() {
+  document.getElementById('settings-name').value = STATE.name || '';
+  document.getElementById('settings-key').value = STATE.apiKey || '';
+  document.getElementById('settings-model').value = STATE.model || 'google/gemini-2.5-flash';
+  document.getElementById('settings-error').innerHTML = '';
+  document.getElementById('settings-modal').classList.remove('hidden');
+}
+document.getElementById('settings-cancel').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.add('hidden');
+});
+document.getElementById('settings-save').addEventListener('click', () => {
+  const name = document.getElementById('settings-name').value.trim();
+  const key = document.getElementById('settings-key').value.trim();
+  const model = document.getElementById('settings-model').value.trim() || 'google/gemini-2.5-flash';
+  if (!name) { document.getElementById('settings-error').innerHTML = '<div class="error-banner">Please enter a name.</div>'; return; }
+  STATE.name = name; STATE.apiKey = key; STATE.model = model;
+  save();
+  refreshHome();
+  document.getElementById('settings-modal').classList.add('hidden');
+});
+document.getElementById('settings-reset').addEventListener('click', () => {
+  if (!confirm('Reset ALL progress (streak, XP, best score, saved test)? Name and API key are kept.')) return;
+  STATE.streak = 0; STATE.xp = 0; STATE.attempts = 0; STATE.bestScore = null;
+  STATE.idx = 0; STATE.answers = {}; STATE.canvases = {}; STATE.wrongList = [];
+  save(); refreshHome();
+  document.getElementById('settings-modal').classList.add('hidden');
+});
+</script>
+</body>
+</html>
