@@ -657,7 +657,7 @@
   <div class="stat-grid" style="margin-top: 16px;">
     <div class="stat-card"><div class="emoji">📚</div><div class="n">3</div><div class="label">Subjects</div></div>
     <div class="stat-card"><div class="emoji">🎯</div><div class="n" id="home-attempts">0</div><div class="label">Past attempts</div></div>
-    <div class="stat-card"><div class="emoji">🦉</div><div class="n">AI</div><div class="label">Tutor on call</div></div>
+    <div class="stat-card"><div class="emoji">🦉</div><div class="n" style="font-size:18px;line-height:1.15">Hall Pass<br>Tutor</div><div class="label">on call</div></div>
   </div>
 </div>
 
@@ -890,13 +890,6 @@
       <button class="btn secondary" id="settings-key-clear" type="button">Clear</button>
     </div>
     <div id="settings-key-status" style="font-size:13px;margin-top:-6px;margin-bottom:6px;color:var(--muted)"></div>
-
-    <label>Voice quality</label>
-    <select id="settings-tts-model">
-      <option value="openai/gpt-4o-mini-tts">Ultra — most natural (recommended)</option>
-      <option value="openai/tts-1-hd">HD — warmer synthetic</option>
-      <option value="openai/tts-1">Standard — cheapest, robotic</option>
-    </select>
 
     <label>Voice</label>
     <div class="voice-row">
@@ -3427,32 +3420,51 @@ async function speak(text) {
   // Truncate overly-long text to protect budget
   const trimmed = text.slice(0, 2000);
   try {
-    const res = await fetch('https://api.aimlapi.com/v1/audio/speech', {
+    // AIMLAPI /v1/tts returns JSON { audio: { url } } or { audio: url }.
+    const res = await fetch('https://api.aimlapi.com/v1/tts', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${STATE.apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: STATE.ttsModel || 'openai/tts-1',
-        input: trimmed,
+        model: 'openai/gpt-4o-mini-tts',
+        text: trimmed,
         voice: STATE.ttsVoice || 'nova',
-        response_format: 'mp3'
       })
     });
     if (!res.ok) {
       const t = await res.text();
       console.warn('TTS error', res.status, t);
-      // Fall back to browser speech
+      alert(`Voice reader failed (${res.status}). Check your access code. Falling back to browser voice — it will sound robotic.`);
       browserSpeak(trimmed);
       return;
     }
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    currentAudio = new Audio(url);
-    currentAudio.play();
+    const ct = res.headers.get('content-type') || '';
+    let audioUrl;
+    if (ct.includes('application/json')) {
+      const data = await res.json();
+      // Response can be { audio: { url } } OR { audio: "https://..." } OR { url: "..." }
+      audioUrl = (data.audio && (data.audio.url || data.audio)) || data.url;
+      if (typeof audioUrl !== 'string') {
+        console.warn('TTS unexpected JSON shape', data);
+        alert('Voice reader returned an unexpected response. Falling back to browser voice.');
+        browserSpeak(trimmed);
+        return;
+      }
+    } else {
+      // Some AIMLAPI routes still stream binary — handle that case too.
+      const blob = await res.blob();
+      audioUrl = URL.createObjectURL(blob);
+    }
+    currentAudio = new Audio(audioUrl);
+    currentAudio.play().catch(err => {
+      console.warn('Audio play failed', err);
+      browserSpeak(trimmed);
+    });
   } catch (e) {
     console.warn('TTS fetch failed', e);
+    alert('Could not reach the voice reader. Falling back to browser voice.');
     browserSpeak(trimmed);
   }
 }
@@ -3540,7 +3552,6 @@ function openSettings() {
   document.getElementById('settings-name').value = STATE.name || '';
   document.getElementById('settings-key').value = STATE.accessCode || '';
   document.getElementById('settings-model').value = STATE.model || 'google/gemini-2.5-flash';
-  document.getElementById('settings-tts-model').value = STATE.ttsModel || 'openai/gpt-4o-mini-tts';
   document.getElementById('settings-tts-voice').value = STATE.ttsVoice || 'nova';
   document.getElementById('settings-error').innerHTML = '';
   document.getElementById('admin-panel').classList.add('hidden');
@@ -3561,12 +3572,11 @@ document.getElementById('settings-save').addEventListener('click', async () => {
   const name = document.getElementById('settings-name').value.trim();
   const code = document.getElementById('settings-key').value.trim();
   const model = document.getElementById('settings-model').value.trim() || 'google/gemini-2.5-flash';
-  const ttsModel = document.getElementById('settings-tts-model').value || 'openai/gpt-4o-mini-tts';
   const voice = document.getElementById('settings-tts-voice').value;
   const errEl = document.getElementById('settings-error');
   errEl.innerHTML = '';
   if (!name) { errEl.innerHTML = '<div class="error-banner">Please enter a name.</div>'; return; }
-  STATE.name = name; STATE.model = model; STATE.ttsModel = ttsModel; STATE.ttsVoice = voice;
+  STATE.name = name; STATE.model = model; STATE.ttsModel = 'openai/gpt-4o-mini-tts'; STATE.ttsVoice = voice;
   // If the code field changed and is non-empty, try to unlock
   if (code && code !== STATE.accessCode) {
     const r = await unlockWithCode(code);
@@ -3593,12 +3603,11 @@ document.getElementById('settings-reset').addEventListener('click', () => {
 });
 document.getElementById('settings-tts-test').addEventListener('click', () => {
   const voice = document.getElementById('settings-tts-voice').value;
-  const ttsModel = document.getElementById('settings-tts-model').value || 'openai/gpt-4o-mini-tts';
   if (!hasApiKey()) { alert(`No access code yet. Enter your code or contact ${ACCESS_CONTACT}.`); return; }
-  const savedVoice = STATE.ttsVoice, savedModel = STATE.ttsModel;
-  STATE.ttsVoice = voice; STATE.ttsModel = ttsModel;
+  const savedVoice = STATE.ttsVoice;
+  STATE.ttsVoice = voice;
   speak(`Hi! I am the ${voice} voice. This is how I sound reading a question out loud.`);
-  setTimeout(() => { STATE.ttsVoice = savedVoice; STATE.ttsModel = savedModel; }, 100);
+  setTimeout(() => { STATE.ttsVoice = savedVoice; }, 100);
 });
 
 // ============================================================
