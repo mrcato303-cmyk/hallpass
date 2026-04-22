@@ -875,6 +875,39 @@
   </div>
 </div>
 
+<!-- FIRST-USE PROGRESS CODE MODAL -->
+<div id="progress-code-modal" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:460px">
+    <h2>🔑 Make your progress code</h2>
+    <p style="margin-top:4px">Pick a short word you'll remember — like your pet's name, a favorite color, or your nickname. We'll add a few random letters so it's unique.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:6px">Use this code to bring your practice progress to another computer or tablet.</p>
+
+    <label style="margin-top:12px">Your memorable word (3-8 letters)</label>
+    <input type="text" id="progress-code-word" placeholder="e.g. DORA" autocomplete="off" maxlength="8" style="text-transform:uppercase;letter-spacing:2px;font-size:18px;font-family:monospace" />
+    <div id="progress-code-preview" style="margin-top:10px;padding:12px;background:var(--primary-soft);border-radius:10px;font-family:monospace;font-size:18px;letter-spacing:2px;color:var(--primary);text-align:center;font-weight:700;display:none"></div>
+    <div id="progress-code-error" style="color:var(--danger);font-size:13px;margin-top:6px"></div>
+
+    <div style="margin-top:14px;padding:10px;background:var(--surface-soft);border-radius:10px;font-size:13px">
+      ✅ Write your full code down on paper or save it somewhere. If you forget it, you can't recover your progress.
+    </div>
+
+    <div class="modal-actions" style="margin-top:14px">
+      <button class="btn secondary" id="progress-code-already" type="button">I already have a code</button>
+      <button class="btn" id="progress-code-save" type="button">Save this code</button>
+    </div>
+
+    <!-- Restore-existing panel (hidden by default) -->
+    <div id="progress-code-restore-panel" class="hidden" style="margin-top:14px;padding:14px;background:var(--surface-soft);border-radius:12px">
+      <label>Paste your existing progress code</label>
+      <input type="text" id="progress-code-restore-input" placeholder="e.g. DORA-7J2K" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
+      <div class="modal-actions" style="margin-top:10px">
+        <button class="btn secondary" id="progress-code-restore-cancel" type="button">Back</button>
+        <button class="btn" id="progress-code-restore-go" type="button">Restore</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div id="settings-modal" class="modal-backdrop hidden">
   <div class="modal">
@@ -884,7 +917,19 @@
     <label>Your name</label>
     <input type="text" id="settings-name" placeholder="Your name" />
 
-    <label>Access code (unlocks AI features)</label>
+    <label style="margin-top:10px">🔑 Your progress code</label>
+    <div class="voice-row">
+      <input type="text" id="settings-progress-code" placeholder="e.g. DORA-7J2K" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
+      <button class="btn secondary" id="settings-progress-copy" type="button">Copy</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:-4px;margin-bottom:6px">Write this down! Use it to move your progress to another device. Keep the whole code (word + dash + letters).</div>
+    <div class="voice-row">
+      <input type="text" id="settings-progress-restore" placeholder="Paste a code to restore from another device" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
+      <button class="btn secondary" id="settings-progress-restore-btn" type="button">Restore</button>
+    </div>
+    <div id="settings-progress-status" style="font-size:13px;margin-top:4px;color:var(--muted)"></div>
+
+    <label style="margin-top:10px">Access code (unlocks AI features)</label>
     <div class="voice-row">
       <input type="password" id="settings-key" placeholder="Code from Dr. Cato" autocomplete="off" />
       <button class="btn secondary" id="settings-key-clear" type="button">Clear</button>
@@ -971,118 +1016,118 @@ const MATH_BANK = {
 
 // ====================== GRADE 3 ======================
 3: [
-  { id: 'm3-01', type: 'mc', topic: 'Multiplication', stem: 'Mia has 4 bags. Each bag holds 7 apples. How many apples does Mia have in all?',
+  { id: 'm3-01', type: 'mc', topic: 'Multiplication', standard: 'NY-3.OA.3', stem: 'Mia has 4 bags. Each bag holds 7 apples. How many apples does Mia have in all?',
     choices: ['11', '24', '28', '35'], answer: 'C' },
-  { id: 'm3-02', type: 'mc', topic: 'Division', stem: 'A teacher divides 24 markers evenly among 6 students. How many markers does each student get?',
+  { id: 'm3-02', type: 'mc', topic: 'Division', standard: 'NY-3.OA.3', stem: 'A teacher divides 24 markers evenly among 6 students. How many markers does each student get?',
     choices: ['3', '4', '5', '6'], answer: 'B' },
-  { id: 'm3-03', type: 'mc', topic: 'Fractions', stem: 'Which fraction is equivalent to ' + f(1,2) + '?',
+  { id: 'm3-03', type: 'mc', topic: 'Fractions', standard: 'NY-3.NF.3', stem: 'Which fraction is equivalent to ' + f(1,2) + '?',
     choices: [f(1,3), f(2,4), f(3,5), f(1,4)], answer: 'B' },
-  { id: 'm3-04', type: 'mc', topic: 'Place Value', stem: 'What is 367 rounded to the nearest hundred?',
+  { id: 'm3-04', type: 'mc', topic: 'Place Value', standard: 'NY-3.NBT.1', stem: 'What is 367 rounded to the nearest hundred?',
     choices: ['300', '360', '370', '400'], answer: 'D' },
-  { id: 'm3-05', type: 'mc', topic: 'Addition', stem: 'A store sold 238 books in March and 416 in April. How many books did it sell in all?',
+  { id: 'm3-05', type: 'mc', topic: 'Addition', standard: 'NY-3.NBT.2', stem: 'A store sold 238 books in March and 416 in April. How many books did it sell in all?',
     choices: ['554', '644', '654', '754'], answer: 'C' },
-  { id: 'm3-06', type: 'mc', topic: 'Subtraction', stem: 'A farm had 602 eggs. Workers sold 387 eggs. How many eggs are left?',
+  { id: 'm3-06', type: 'mc', topic: 'Subtraction', standard: 'NY-3.NBT.2', stem: 'A farm had 602 eggs. Workers sold 387 eggs. How many eggs are left?',
     choices: ['215', '225', '285', '315'], answer: 'A' },
-  { id: 'm3-07', type: 'mc', topic: 'Multiplication', stem: 'Which expression is equal to 6 × 8?',
+  { id: 'm3-07', type: 'mc', topic: 'Multiplication', standard: 'NY-3.OA.3', stem: 'Which expression is equal to 6 × 8?',
     choices: ['6 + 8', '8 + 8 + 8', '6 + 6 + 6 + 6 + 6 + 6 + 6 + 6', '6 × 6 × 6 × 6 × 6 × 6 × 6 × 6'], answer: 'C' },
-  { id: 'm3-08', type: 'mc', topic: 'Area', stem: 'A rectangle is 5 feet long and 3 feet wide. What is its area, in square feet?',
+  { id: 'm3-08', type: 'mc', topic: 'Area', standard: 'NY-3.MD.7', stem: 'A rectangle is 5 feet long and 3 feet wide. What is its area, in square feet?',
     choices: ['8', '15', '16', '30'], answer: 'B' },
-  { id: 'm3-09', type: 'mc', topic: 'Perimeter', stem: 'A square has sides of 9 inches. What is its perimeter, in inches?',
+  { id: 'm3-09', type: 'mc', topic: 'Perimeter', standard: 'NY-3.MD.8', stem: 'A square has sides of 9 inches. What is its perimeter, in inches?',
     choices: ['18', '27', '36', '81'], answer: 'C' },
-  { id: 'm3-10', type: 'mc', topic: 'Fractions', stem: 'Anna ate ' + f(3,8) + ' of a pizza. Bea ate ' + f(2,8) + '. How much of the pizza did they eat together?',
+  { id: 'm3-10', type: 'mc', topic: 'Fractions', standard: 'NY-3.NF.3', stem: 'Anna ate ' + f(3,8) + ' of a pizza. Bea ate ' + f(2,8) + '. How much of the pizza did they eat together?',
     choices: [f(1,8), f(5,16), f(5,8), f(6,8)], answer: 'C' },
-  { id: 'm3-11', type: 'mc', topic: 'Time', stem: 'A movie started at 2:45 p.m. and ended at 4:10 p.m. How long was the movie?',
+  { id: 'm3-11', type: 'mc', topic: 'Time', standard: 'NY-3.MD.1', stem: 'A movie started at 2:45 p.m. and ended at 4:10 p.m. How long was the movie?',
     choices: ['1 hour 15 minutes', '1 hour 25 minutes', '1 hour 35 minutes', '1 hour 45 minutes'], answer: 'B' },
-  { id: 'm3-12', type: 'mc', topic: 'Mass', stem: 'Which unit would you use to measure the mass of an apple?',
+  { id: 'm3-12', type: 'mc', topic: 'Mass', standard: 'NY-3.MD.2', stem: 'Which unit would you use to measure the mass of an apple?',
     choices: ['kilograms', 'grams', 'liters', 'meters'], answer: 'B' },
-  { id: 'm3-13', type: 'mc', topic: 'Multiplication', stem: 'A classroom has 9 rows of 7 desks. How many desks are there in all?',
+  { id: 'm3-13', type: 'mc', topic: 'Multiplication', standard: 'NY-3.OA.3', stem: 'A classroom has 9 rows of 7 desks. How many desks are there in all?',
     choices: ['16', '56', '63', '72'], answer: 'C' },
-  { id: 'm3-14', type: 'mc', topic: 'Division', stem: 'A baker puts 42 cookies into boxes of 7. How many boxes does she fill?',
+  { id: 'm3-14', type: 'mc', topic: 'Division', standard: 'NY-3.OA.3', stem: 'A baker puts 42 cookies into boxes of 7. How many boxes does she fill?',
     choices: ['5', '6', '7', '8'], answer: 'B' },
-  { id: 'm3-15', type: 'mc', topic: 'Fractions', stem: 'Which fraction is greater than ' + f(1,2) + '?',
+  { id: 'm3-15', type: 'mc', topic: 'Fractions', standard: 'NY-3.NF.3', stem: 'Which fraction is greater than ' + f(1,2) + '?',
     choices: [f(1,4), f(2,5), f(3,8), f(5,8)], answer: 'D' },
-  { id: 'm3-16', type: 'mc', topic: 'Word Problems', stem: 'Leo has 3 packs of trading cards. Each pack has 12 cards. He gives 4 cards to his brother. How many cards does Leo have now?',
+  { id: 'm3-16', type: 'mc', topic: 'Word Problems', standard: 'NY-3.OA.8a', stem: 'Leo has 3 packs of trading cards. Each pack has 12 cards. He gives 4 cards to his brother. How many cards does Leo have now?',
     choices: ['28', '32', '36', '40'], answer: 'B' },
-  { id: 'm3-17', type: 'mc', topic: 'Place Value', stem: 'Which number is greatest?',
+  { id: 'm3-17', type: 'mc', topic: 'Place Value', standard: 'NY-3.NBT.1', stem: 'Which number is greatest?',
     choices: ['486', '468', '864', '846'], answer: 'C' },
-  { id: 'm3-18', type: 'mc', topic: 'Geometry', stem: 'Which shape has exactly 4 equal sides and 4 right angles?',
+  { id: 'm3-18', type: 'mc', topic: 'Geometry', standard: 'NY-3.G.1', stem: 'Which shape has exactly 4 equal sides and 4 right angles?',
     choices: ['rectangle', 'trapezoid', 'square', 'rhombus'], answer: 'C' },
-  { id: 'm3-19', type: 'mc', topic: 'Data', stem: 'Students voted on favorite fruit: 8 apple, 5 banana, 7 grape, 4 orange. How many students voted in all?',
+  { id: 'm3-19', type: 'mc', topic: 'Data', standard: 'NY-3.MD.3', stem: 'Students voted on favorite fruit: 8 apple, 5 banana, 7 grape, 4 orange. How many students voted in all?',
     choices: ['19', '22', '24', '28'], answer: 'C' },
-  { id: 'm3-20', type: 'mc', topic: 'Multiplication', stem: 'Which product is greater than 40?',
+  { id: 'm3-20', type: 'mc', topic: 'Multiplication', standard: 'NY-3.OA.3', stem: 'Which product is greater than 40?',
     choices: ['4 × 9', '5 × 7', '6 × 7', '3 × 9'], answer: 'C' },
-  { id: 'm3-fill-01', type: 'fill', topic: 'Word Problems',
+  { id: 'm3-fill-01', type: 'fill', topic: 'Word Problems', standard: 'NY-3.OA.8a',
     stem: 'There are 8 tables in a room. Each table seats 6 people. How many people can sit at the tables in all?',
     unit: 'people', hint: 'Whole number.', answer: ['48'] },
-  { id: 'm3-fill-02', type: 'fill', topic: 'Fractions',
+  { id: 'm3-fill-02', type: 'fill', topic: 'Fractions', standard: 'NY-3.NF.3',
     stem: 'A chocolate bar is divided into 8 equal pieces. Carla eats 3 pieces. What fraction of the bar did Carla eat? Type it like 3/8.',
     unit: '', hint: 'Write the fraction.', answer: ['3/8'] },
-  { id: 'm3-fill-03', type: 'fill', topic: 'Area',
+  { id: 'm3-fill-03', type: 'fill', topic: 'Area', standard: 'NY-3.MD.7',
     stem: 'A rug is 6 feet long and 4 feet wide. What is its area, in square feet?',
     unit: 'square feet', hint: 'Whole number.', answer: ['24'] },
-  { id: 'm3-fill-04', type: 'fill', topic: 'Division',
+  { id: 'm3-fill-04', type: 'fill', topic: 'Division', standard: 'NY-3.OA.3',
     stem: 'A teacher shares 56 pencils equally among 8 students. How many pencils does each student get?',
     unit: 'pencils', hint: 'Whole number.', answer: ['7'] },
-  { id: 'm3-fill-05', type: 'fill', topic: 'Time',
+  { id: 'm3-fill-05', type: 'fill', topic: 'Time', standard: 'NY-3.MD.1',
     stem: 'A soccer practice starts at 3:15 p.m. and lasts for 45 minutes. At what time does it end? Write the time like 4:00.',
     unit: '', hint: 'Write the time.', answer: ['4:00', '4:00 p.m.'] },
 ],
 
 // ====================== GRADE 4 ======================
 4: [
-  { id: 'm4-01', type: 'mc', topic: 'Multi-digit Multiplication', stem: 'What is 26 × 14?',
+  { id: 'm4-01', type: 'mc', topic: 'Multi-digit Multiplication', standard: 'NY-4.NBT.5', stem: 'What is 26 × 14?',
     choices: ['312', '354', '364', '416'], answer: 'C' },
-  { id: 'm4-02', type: 'mc', topic: 'Division', stem: 'A school ordered 648 markers in packs of 8. How many packs did they order?',
+  { id: 'm4-02', type: 'mc', topic: 'Division', standard: 'NY-4.NBT.6', stem: 'A school ordered 648 markers in packs of 8. How many packs did they order?',
     choices: ['70', '78', '81', '89'], answer: 'C' },
-  { id: 'm4-03', type: 'mc', topic: 'Place Value', stem: 'In the number 48,317, which digit is in the thousands place?',
+  { id: 'm4-03', type: 'mc', topic: 'Place Value', standard: 'NY-4.NBT.1', stem: 'In the number 48,317, which digit is in the thousands place?',
     choices: ['4', '8', '3', '1'], answer: 'B' },
-  { id: 'm4-04', type: 'mc', topic: 'Rounding', stem: 'What is 57,842 rounded to the nearest thousand?',
+  { id: 'm4-04', type: 'mc', topic: 'Rounding', standard: 'NY-4.NBT.3', stem: 'What is 57,842 rounded to the nearest thousand?',
     choices: ['57,000', '57,800', '58,000', '60,000'], answer: 'C' },
-  { id: 'm4-05', type: 'mc', topic: 'Equivalent Fractions', stem: 'Which fraction is equivalent to ' + f(3,4) + '?',
+  { id: 'm4-05', type: 'mc', topic: 'Equivalent Fractions', standard: 'NY-4.NF.1', stem: 'Which fraction is equivalent to ' + f(3,4) + '?',
     choices: [f(4,6), f(6,8), f(7,12), f(5,8)], answer: 'B' },
-  { id: 'm4-06', type: 'mc', topic: 'Fractions Add/Sub', stem: 'What is ' + f(5,8) + ' &minus; ' + f(1,8) + '?',
+  { id: 'm4-06', type: 'mc', topic: 'Fractions Add/Sub', standard: 'NY-4.NF.1', stem: 'What is ' + f(5,8) + ' &minus; ' + f(1,8) + '?',
     choices: [f(4,16), f(4,8), f(6,8), f(1,2)], answer: 'B' },
-  { id: 'm4-07', type: 'mc', topic: 'Decimals', stem: 'Which decimal is equal to ' + f(6,10) + '?',
+  { id: 'm4-07', type: 'mc', topic: 'Decimals', standard: 'NY-4.NF.6', stem: 'Which decimal is equal to ' + f(6,10) + '?',
     choices: ['0.06', '0.6', '6.0', '0.60'], answer: 'B' },
-  { id: 'm4-08', type: 'mc', topic: 'Comparing Fractions', stem: 'Which comparison is true?',
+  { id: 'm4-08', type: 'mc', topic: 'Comparing Fractions', standard: 'NY-4.NF.2', stem: 'Which comparison is true?',
     choices: [f(2,3) + ' &lt; ' + f(1,2), f(3,4) + ' &gt; ' + f(5,8), f(1,3) + ' &gt; ' + f(2,5), f(4,5) + ' &lt; ' + f(3,4)], answer: 'B' },
-  { id: 'm4-09', type: 'mc', topic: 'Area', stem: 'A rectangular garden is 12 meters long and 8 meters wide. What is its area, in square meters?',
+  { id: 'm4-09', type: 'mc', topic: 'Area', standard: 'NY-4.MD.3', stem: 'A rectangular garden is 12 meters long and 8 meters wide. What is its area, in square meters?',
     choices: ['20', '40', '86', '96'], answer: 'D' },
-  { id: 'm4-10', type: 'mc', topic: 'Perimeter', stem: 'The perimeter of a rectangle is 44 cm. The length is 15 cm. What is the width, in cm?',
+  { id: 'm4-10', type: 'mc', topic: 'Perimeter', standard: 'NY-4.MD.3', stem: 'The perimeter of a rectangle is 44 cm. The length is 15 cm. What is the width, in cm?',
     choices: ['7', '14', '22', '29'], answer: 'A' },
-  { id: 'm4-11', type: 'mc', topic: 'Factors', stem: 'Which number is a factor of 36 but NOT a factor of 24?',
+  { id: 'm4-11', type: 'mc', topic: 'Factors', standard: 'NY-4.OA.4', stem: 'Which number is a factor of 36 but NOT a factor of 24?',
     choices: ['4', '6', '9', '12'], answer: 'C' },
-  { id: 'm4-12', type: 'mc', topic: 'Multiples', stem: 'Which number is a multiple of both 3 and 4?',
+  { id: 'm4-12', type: 'mc', topic: 'Multiples', standard: 'NY-4.OA.4', stem: 'Which number is a multiple of both 3 and 4?',
     choices: ['10', '12', '15', '21'], answer: 'B' },
-  { id: 'm4-13', type: 'mc', topic: 'Geometry', stem: 'Which angle measures less than 90 degrees?',
+  { id: 'm4-13', type: 'mc', topic: 'Geometry', standard: 'NY-4.G.2', stem: 'Which angle measures less than 90 degrees?',
     choices: ['right', 'acute', 'obtuse', 'straight'], answer: 'B' },
-  { id: 'm4-14', type: 'mc', topic: 'Measurement', stem: 'How many inches are in 4 feet?',
+  { id: 'm4-14', type: 'mc', topic: 'Measurement', standard: 'NY-4.MD.1', stem: 'How many inches are in 4 feet?',
     choices: ['16', '36', '40', '48'], answer: 'D' },
-  { id: 'm4-15', type: 'mc', topic: 'Word Problems', stem: 'Jamie reads 23 pages each night for 6 nights. How many pages does he read in all?',
+  { id: 'm4-15', type: 'mc', topic: 'Word Problems', standard: 'NY-4.OA.3', stem: 'Jamie reads 23 pages each night for 6 nights. How many pages does he read in all?',
     choices: ['29', '126', '138', '148'], answer: 'C' },
-  { id: 'm4-16', type: 'mc', topic: 'Decimals', stem: 'Which decimal is greater than 0.47?',
+  { id: 'm4-16', type: 'mc', topic: 'Decimals', standard: 'NY-4.NF.6', stem: 'Which decimal is greater than 0.47?',
     choices: ['0.407', '0.47', '0.5', '0.408'], answer: 'C' },
-  { id: 'm4-17', type: 'mc', topic: 'Patterns', stem: 'A pattern starts 6, 12, 18, 24, ... What is the 8th number in the pattern?',
+  { id: 'm4-17', type: 'mc', topic: 'Patterns', standard: 'NY-4.OA.5', stem: 'A pattern starts 6, 12, 18, 24, ... What is the 8th number in the pattern?',
     choices: ['42', '48', '54', '60'], answer: 'B' },
-  { id: 'm4-18', type: 'mc', topic: 'Fractions ×', stem: 'What is 5 × ' + f(1,6) + '?',
+  { id: 'm4-18', type: 'mc', topic: 'Fractions ×', standard: 'NY-4.NF.1', stem: 'What is 5 × ' + f(1,6) + '?',
     choices: [f(1,30), f(5,6), f(6,5), f(5,36)], answer: 'B' },
-  { id: 'm4-19', type: 'mc', topic: 'Division w/ Remainder', stem: 'There are 85 apples to be put into bags of 6. How many apples will be left over?',
+  { id: 'm4-19', type: 'mc', topic: 'Division w/ Remainder', standard: 'NY-4.NBT.6', stem: 'There are 85 apples to be put into bags of 6. How many apples will be left over?',
     choices: ['1', '3', '5', '14'], answer: 'A' },
-  { id: 'm4-20', type: 'mc', topic: 'Symmetry', stem: 'Which letter has exactly one line of symmetry?',
+  { id: 'm4-20', type: 'mc', topic: 'Symmetry', standard: 'NY-4.G.3', stem: 'Which letter has exactly one line of symmetry?',
     choices: ['O', 'H', 'A', 'S'], answer: 'C' },
-  { id: 'm4-fill-01', type: 'fill', topic: 'Multi-digit Multiplication',
+  { id: 'm4-fill-01', type: 'fill', topic: 'Multi-digit Multiplication', standard: 'NY-4.NBT.5',
     stem: 'What is 47 × 32?',
     unit: '', hint: 'Whole number.', answer: ['1504', '1,504'] },
-  { id: 'm4-fill-02', type: 'fill', topic: 'Fraction Addition',
+  { id: 'm4-fill-02', type: 'fill', topic: 'Fraction Addition', standard: 'NY-4.NBT.4',
     stem: 'What is ' + f(3,10) + ' + ' + f(4,10) + '? Write your answer as a fraction like 7/10.',
     unit: '', hint: 'Fraction.', answer: ['7/10'] },
-  { id: 'm4-fill-03', type: 'fill', topic: 'Word Problems',
+  { id: 'm4-fill-03', type: 'fill', topic: 'Word Problems', standard: 'NY-4.OA.3',
     stem: 'A bakery packs 8 muffins in each box. They made 216 muffins. How many full boxes can they pack?',
     unit: 'boxes', hint: 'Whole number.', answer: ['27'] },
-  { id: 'm4-fill-04', type: 'fill', topic: 'Measurement',
+  { id: 'm4-fill-04', type: 'fill', topic: 'Measurement', standard: 'NY-4.MD.1',
     stem: 'A water jug holds 2 liters. How many milliliters is that? (1 L = 1,000 mL)',
     unit: 'milliliters', hint: 'Whole number.', answer: ['2000', '2,000'] },
-  { id: 'm4-fill-05', type: 'fill', topic: 'Perimeter',
+  { id: 'm4-fill-05', type: 'fill', topic: 'Perimeter', standard: 'NY-4.MD.3',
     stem: 'A rectangular photo is 8 inches long and 5 inches wide. What is its perimeter, in inches?',
     unit: 'inches', hint: 'Whole number.', answer: ['26'] },
 ],
@@ -1173,238 +1218,238 @@ const MATH_BANK = {
     stem: '<strong>3 credits.</strong> Josh is training for a race.<ul><li>Josh runs 12.35 miles in March.</li><li>Josh runs 3 times as many miles in April as in March.</li><li>Josh runs 43.1 more miles in May than he ran in March.</li></ul>What is the total number of miles Josh runs for these three months? Show your work on the right.',
     unit: 'miles', hint: 'Decimal answer.', answer: ['104.85','104.85 miles'], legacy: true },
   // -- Additional Grade 5 items --
-  { id: 'm5-extra-01', type: 'mc', topic: 'Order of Operations',
+  { id: 'm5-extra-01', type: 'mc', topic: 'Order of Operations', standard: 'NY-5.NF.1',
     stem: 'What is the value of 4 + 2 × (7 &minus; 3)?',
     choices: ['12', '24', '20', '10'], answer: 'A' },
-  { id: 'm5-extra-02', type: 'mc', topic: 'Coordinate Grid',
+  { id: 'm5-extra-02', type: 'mc', topic: 'Coordinate Grid', standard: 'NY-5.NF.1',
     stem: 'A point is located at (3, 5) on a coordinate grid. What does the 3 tell you?',
     choices: ['Move 3 units up', 'Move 3 units right', 'Move 3 units left', 'Move 3 units down'], answer: 'B' },
-  { id: 'm5-extra-03', type: 'mc', topic: 'Decimal ×',
+  { id: 'm5-extra-03', type: 'mc', topic: 'Decimal ×', standard: 'NY-5.NF.1',
     stem: 'What is 0.4 × 0.6?',
     choices: ['0.10', '0.24', '2.4', '0.024'], answer: 'B' },
-  { id: 'm5-extra-04', type: 'mc', topic: 'Powers of 10',
+  { id: 'm5-extra-04', type: 'mc', topic: 'Powers of 10', standard: 'NY-5.NBT.2',
     stem: 'What is 6.3 × 100?',
     choices: ['0.063', '63', '630', '6,300'], answer: 'C' },
 ],
 
 // ====================== GRADE 6 ======================
 6: [
-  { id: 'm6-01', type: 'mc', topic: 'Ratios', stem: 'A recipe uses 3 cups of flour for every 2 cups of sugar. Which ratio shows flour to sugar?',
+  { id: 'm6-01', type: 'mc', topic: 'Ratios', standard: 'NY-6.RP.1', stem: 'A recipe uses 3 cups of flour for every 2 cups of sugar. Which ratio shows flour to sugar?',
     choices: ['2:3', '3:2', '3:5', '5:2'], answer: 'B' },
-  { id: 'm6-02', type: 'mc', topic: 'Unit Rate', stem: 'A car travels 180 miles in 3 hours. What is the unit rate, in miles per hour?',
+  { id: 'm6-02', type: 'mc', topic: 'Unit Rate', standard: 'NY-6.RP.3', stem: 'A car travels 180 miles in 3 hours. What is the unit rate, in miles per hour?',
     choices: ['54', '60', '63', '90'], answer: 'B' },
-  { id: 'm6-03', type: 'mc', topic: 'Percent', stem: '25% of 80 is what number?',
+  { id: 'm6-03', type: 'mc', topic: 'Percent', standard: 'NY-6.RP.3c', stem: '25% of 80 is what number?',
     choices: ['2', '16', '20', '32'], answer: 'C' },
-  { id: 'm6-04', type: 'mc', topic: 'Fraction ÷', stem: 'What is ' + f(3,4) + ' &divide; ' + f(1,2) + '?',
+  { id: 'm6-04', type: 'mc', topic: 'Fraction ÷', standard: 'NY-6.EE.7', stem: 'What is ' + f(3,4) + ' &divide; ' + f(1,2) + '?',
     choices: [f(3,8), mf(1,1,2), f(3,2), f(1,2)], answer: 'B' },
-  { id: 'm6-05', type: 'mc', topic: 'Integers', stem: 'On a number line, which number is farthest from 0?',
+  { id: 'm6-05', type: 'mc', topic: 'Integers', standard: 'NY-6.NS.5', stem: 'On a number line, which number is farthest from 0?',
     choices: ['-8', '-3', '5', '7'], answer: 'A' },
-  { id: 'm6-06', type: 'mc', topic: 'Equations', stem: 'What is the value of x in 3x + 5 = 20?',
+  { id: 'm6-06', type: 'mc', topic: 'Equations', standard: 'NY-6.EE.5', stem: 'What is the value of x in 3x + 5 = 20?',
     choices: ['3', '5', '8', '15'], answer: 'B' },
-  { id: 'm6-07', type: 'mc', topic: 'Expressions', stem: 'Which expression is equivalent to 4(x + 3)?',
+  { id: 'm6-07', type: 'mc', topic: 'Expressions', standard: 'NY-6.EE.1', stem: 'Which expression is equivalent to 4(x + 3)?',
     choices: ['4x + 3', '4x + 7', '4x + 12', 'x + 12'], answer: 'C' },
-  { id: 'm6-08', type: 'mc', topic: 'Area of Triangle',
+  { id: 'm6-08', type: 'mc', topic: 'Area of Triangle', standard: 'NY-6.G.1',
     stem: 'A triangle has a base of 10 cm and a height of 6 cm. What is its area, in square centimeters?',
     choices: ['16', '30', '60', '32'], answer: 'B' },
-  { id: 'm6-09', type: 'mc', topic: 'Statistics', stem: 'What is the median of: 5, 8, 3, 9, 10, 6, 7?',
+  { id: 'm6-09', type: 'mc', topic: 'Statistics', standard: 'NY-6.SP.5', stem: 'What is the median of: 5, 8, 3, 9, 10, 6, 7?',
     choices: ['6', '7', '8', '9'], answer: 'B' },
-  { id: 'm6-10', type: 'mc', topic: 'Mean',
+  { id: 'm6-10', type: 'mc', topic: 'Mean', standard: 'NY-6.EE.7',
     stem: 'Maya\'s quiz scores are 85, 92, 78, and 89. What is her mean (average) score?',
     choices: ['82', '84', '86', '89'], answer: 'C' },
-  { id: 'm6-11', type: 'mc', topic: 'Absolute Value', stem: 'What is |-12|?',
+  { id: 'm6-11', type: 'mc', topic: 'Absolute Value', standard: 'NY-6.NS.7c', stem: 'What is |-12|?',
     choices: ['-12', '0', '12', '-6'], answer: 'C' },
-  { id: 'm6-12', type: 'mc', topic: 'Ratios/Percent', stem: 'A sweater costs $40. It is marked down 15%. What is the discount?',
+  { id: 'm6-12', type: 'mc', topic: 'Ratios/Percent', standard: 'NY-6.RP.1', stem: 'A sweater costs $40. It is marked down 15%. What is the discount?',
     choices: ['$4', '$6', '$15', '$25'], answer: 'B' },
-  { id: 'm6-13', type: 'mc', topic: 'Coordinate Plane',
+  { id: 'm6-13', type: 'mc', topic: 'Coordinate Plane', standard: 'NY-6.NS.6',
     stem: 'Which quadrant contains the point (-3, 4)?',
     choices: ['I', 'II', 'III', 'IV'], answer: 'B' },
-  { id: 'm6-14', type: 'mc', topic: 'Fraction ÷',
+  { id: 'm6-14', type: 'mc', topic: 'Fraction ÷', standard: 'NY-6.EE.7',
     stem: 'How many ' + f(1,4) + ' cup servings are in 3 cups?',
     choices: ['7', '10', '12', '16'], answer: 'C' },
-  { id: 'm6-15', type: 'mc', topic: 'Surface Area',
+  { id: 'm6-15', type: 'mc', topic: 'Surface Area', standard: 'NY-6.G.4',
     stem: 'A cube has edges of 4 inches. What is its total surface area, in square inches?',
     choices: ['16', '64', '96', '384'], answer: 'C' },
-  { id: 'm6-16', type: 'mc', topic: 'Inequalities', stem: 'Which number makes the inequality x &gt; 5 TRUE?',
+  { id: 'm6-16', type: 'mc', topic: 'Inequalities', standard: 'NY-6.EE.8', stem: 'Which number makes the inequality x &gt; 5 TRUE?',
     choices: ['2', '4', '5', '7'], answer: 'D' },
-  { id: 'm6-17', type: 'mc', topic: 'Word Problems',
+  { id: 'm6-17', type: 'mc', topic: 'Word Problems', standard: 'NY-6.EE.7',
     stem: 'A water tank is ' + f(3,4) + ' full. It holds 400 gallons when full. How many gallons are in the tank now?',
     choices: ['100', '150', '300', '350'], answer: 'C' },
-  { id: 'm6-18', type: 'mc', topic: 'Ratio Tables',
+  { id: 'm6-18', type: 'mc', topic: 'Ratio Tables', standard: 'NY-6.EE.7',
     stem: 'If 4 notebooks cost $6, how much do 10 notebooks cost?',
     choices: ['$12', '$14', '$15', '$18'], answer: 'C' },
-  { id: 'm6-19', type: 'mc', topic: 'Decimals', stem: 'What is 7.2 &divide; 0.4?',
+  { id: 'm6-19', type: 'mc', topic: 'Decimals', standard: 'NY-6.NS.3', stem: 'What is 7.2 &divide; 0.4?',
     choices: ['1.8', '18', '28.8', '180'], answer: 'B' },
-  { id: 'm6-20', type: 'mc', topic: 'Box Plot / Range',
+  { id: 'm6-20', type: 'mc', topic: 'Box Plot / Range', standard: 'NY-6.EE.7',
     stem: 'A set of numbers has a minimum of 12 and a maximum of 47. What is the range?',
     choices: ['29.5', '35', '47', '59'], answer: 'B' },
-  { id: 'm6-fill-01', type: 'fill', topic: 'Percent',
+  { id: 'm6-fill-01', type: 'fill', topic: 'Percent', standard: 'NY-6.RP.3c',
     stem: '40% of 150 is what number?',
     unit: '', hint: 'Whole number.', answer: ['60'] },
-  { id: 'm6-fill-02', type: 'fill', topic: 'Equations',
+  { id: 'm6-fill-02', type: 'fill', topic: 'Equations', standard: 'NY-6.EE.5',
     stem: 'Solve for x: 5x &minus; 4 = 21',
     unit: '', hint: 'Whole number.', answer: ['5'] },
-  { id: 'm6-fill-03', type: 'fill', topic: 'Fraction ÷',
+  { id: 'm6-fill-03', type: 'fill', topic: 'Fraction ÷', standard: 'NY-6.EE.7',
     stem: 'What is ' + f(5,6) + ' &divide; ' + f(1,3) + '? Write as a fraction or mixed number like 2 1/2.',
     unit: '', hint: 'Simplify if possible.', answer: ['5/2', '2 1/2', '2.5'] },
-  { id: 'm6-fill-04', type: 'fill', topic: 'Word Problems',
+  { id: 'm6-fill-04', type: 'fill', topic: 'Word Problems', standard: 'NY-6.EE.7',
     stem: 'A store sold 220 shirts in January. That was 40% of the shirts it sold all year. How many shirts did the store sell all year?',
     unit: 'shirts', hint: 'Whole number.', answer: ['550'] },
-  { id: 'm6-fill-05', type: 'fill', topic: 'Volume',
+  { id: 'm6-fill-05', type: 'fill', topic: 'Volume', standard: 'NY-6.G.2',
     stem: 'A rectangular prism is 5 cm long, 4 cm wide, and 3 cm tall. What is its volume, in cubic centimeters?',
     unit: 'cubic cm', hint: 'Whole number.', answer: ['60'] },
 ],
 
 // ====================== GRADE 7 ======================
 7: [
-  { id: 'm7-01', type: 'mc', topic: 'Proportions', stem: 'If 6 pencils cost $4.50, how much do 10 pencils cost at the same rate?',
+  { id: 'm7-01', type: 'mc', topic: 'Proportions', standard: 'NY-7.EE.3', stem: 'If 6 pencils cost $4.50, how much do 10 pencils cost at the same rate?',
     choices: ['$6.00', '$7.00', '$7.50', '$8.00'], answer: 'C' },
-  { id: 'm7-02', type: 'mc', topic: 'Integer Operations', stem: 'What is -8 + 15 &minus; (-3)?',
+  { id: 'm7-02', type: 'mc', topic: 'Integer Operations', standard: 'NY-7.EE.3', stem: 'What is -8 + 15 &minus; (-3)?',
     choices: ['-20', '4', '10', '-4'], answer: 'C' },
-  { id: 'm7-03', type: 'mc', topic: 'Integer ×', stem: 'What is (-6) × (-4)?',
+  { id: 'm7-03', type: 'mc', topic: 'Integer ×', standard: 'NY-7.EE.3', stem: 'What is (-6) × (-4)?',
     choices: ['-24', '-10', '10', '24'], answer: 'D' },
-  { id: 'm7-04', type: 'mc', topic: 'Percent Change',
+  { id: 'm7-04', type: 'mc', topic: 'Percent Change', standard: 'NY-7.RP.3',
     stem: 'A shirt was $25 and is now $20. What is the percent decrease?',
     choices: ['5%', '20%', '25%', '80%'], answer: 'B' },
-  { id: 'm7-05', type: 'mc', topic: 'Simple Interest',
+  { id: 'm7-05', type: 'mc', topic: 'Simple Interest', standard: 'NY-7.EE.3',
     stem: 'Mia deposits $500 at 4% simple interest. How much interest does she earn in 3 years?',
     choices: ['$12', '$20', '$60', '$600'], answer: 'C' },
-  { id: 'm7-06', type: 'mc', topic: 'Equations',
+  { id: 'm7-06', type: 'mc', topic: 'Equations', standard: 'NY-7.EE.4',
     stem: 'What is the solution to 2(x + 3) = 14?',
     choices: ['x = 4', 'x = 5', 'x = 7', 'x = 10'], answer: 'A' },
-  { id: 'm7-07', type: 'mc', topic: 'Inequalities',
+  { id: 'm7-07', type: 'mc', topic: 'Inequalities', standard: 'NY-7.EE.4b',
     stem: 'Which inequality represents the statement "twice a number is at least 18"?',
     choices: ['2x &lt; 18', '2x ≤ 18', '2x ≥ 18', '2x &gt; 18'], answer: 'C' },
-  { id: 'm7-08', type: 'mc', topic: 'Area of Circle',
+  { id: 'm7-08', type: 'mc', topic: 'Area of Circle', standard: 'NY-7.G.4',
     stem: 'A circle has a radius of 5 cm. What is its area? Use π ≈ 3.14.',
     choices: ['15.7', '31.4', '78.5', '157'], answer: 'C' },
-  { id: 'm7-09', type: 'mc', topic: 'Circumference',
+  { id: 'm7-09', type: 'mc', topic: 'Circumference', standard: 'NY-7.G.4',
     stem: 'A circle has a diameter of 14 inches. What is its circumference? Use π ≈ ' + f(22,7) + '.',
     choices: ['22 in', '44 in', '154 in', '616 in'], answer: 'B' },
-  { id: 'm7-10', type: 'mc', topic: 'Probability',
+  { id: 'm7-10', type: 'mc', topic: 'Probability', standard: 'NY-7.SP.5',
     stem: 'A bag has 3 red, 5 blue, and 4 green marbles. What is the probability of drawing a blue marble?',
     choices: [f(3,12), f(5,12), f(4,12), f(1,12)], answer: 'B' },
-  { id: 'm7-11', type: 'mc', topic: 'Proportions',
+  { id: 'm7-11', type: 'mc', topic: 'Proportions', standard: 'NY-7.EE.3',
     stem: 'In a map, 2 cm represents 5 km. How many km does 7 cm represent?',
     choices: ['10', '14', '17.5', '35'], answer: 'C' },
-  { id: 'm7-12', type: 'mc', topic: 'Scale Drawings',
+  { id: 'm7-12', type: 'mc', topic: 'Scale Drawings', standard: 'NY-7.EE.3',
     stem: 'A scale model of a car uses 1:24. If the model is 8 in long, how long is the actual car, in inches?',
     choices: ['32', '96', '192', '240'], answer: 'C' },
-  { id: 'm7-13', type: 'mc', topic: 'Rational Numbers',
+  { id: 'm7-13', type: 'mc', topic: 'Rational Numbers', standard: 'NY-7.NS.2',
     stem: 'Which fraction is equivalent to the repeating decimal 0.555...?',
     choices: [f(1,2), f(5,9), f(5,10), f(9,5)], answer: 'B' },
-  { id: 'm7-14', type: 'mc', topic: 'Equivalent Expressions',
+  { id: 'm7-14', type: 'mc', topic: 'Equivalent Expressions', standard: 'NY-7.EE.1',
     stem: 'Which expression is equivalent to -3(2x &minus; 5)?',
     choices: ['-6x &minus; 15', '-6x + 15', '6x &minus; 15', '6x + 5'], answer: 'B' },
-  { id: 'm7-15', type: 'mc', topic: 'Statistics',
+  { id: 'm7-15', type: 'mc', topic: 'Statistics', standard: 'NY-7.SP.2',
     stem: 'The mean of 5 numbers is 12. Four of the numbers are 10, 14, 11, and 13. What is the fifth number?',
     choices: ['10', '12', '14', '16'], answer: 'B' },
-  { id: 'm7-16', type: 'mc', topic: 'Volume',
+  { id: 'm7-16', type: 'mc', topic: 'Volume', standard: 'NY-7.G.6',
     stem: 'A cylinder has a radius of 3 cm and a height of 10 cm. What is its volume? Use π ≈ 3.14.',
     choices: ['94.2', '188.4', '282.6', '30'], answer: 'C' },
-  { id: 'm7-17', type: 'mc', topic: 'Angles',
+  { id: 'm7-17', type: 'mc', topic: 'Angles', standard: 'NY-7.G.5',
     stem: 'Two angles are supplementary. One measures 47°. What is the measure of the other?',
     choices: ['43°', '53°', '133°', '143°'], answer: 'C' },
-  { id: 'm7-18', type: 'mc', topic: 'Proportional Relationships',
+  { id: 'm7-18', type: 'mc', topic: 'Proportional Relationships', standard: 'NY-7.EE.3',
     stem: 'Which equation represents a proportional relationship?',
     choices: ['y = 3x + 2', 'y = x²', 'y = 4x', 'y = x &minus; 5'], answer: 'C' },
-  { id: 'm7-19', type: 'mc', topic: 'Rational Numbers',
+  { id: 'm7-19', type: 'mc', topic: 'Rational Numbers', standard: 'NY-7.NS.2',
     stem: 'Which number is between -0.7 and -0.4?',
     choices: ['-0.3', '-0.5', '-0.8', '-1.0'], answer: 'B' },
-  { id: 'm7-20', type: 'mc', topic: 'Percents',
+  { id: 'm7-20', type: 'mc', topic: 'Percents', standard: 'NY-7.RP.3',
     stem: 'Sam\'s bill is $48. He leaves a 20% tip. How much is the tip?',
     choices: ['$4.80', '$7.20', '$8.00', '$9.60'], answer: 'D' },
-  { id: 'm7-fill-01', type: 'fill', topic: 'Equations',
+  { id: 'm7-fill-01', type: 'fill', topic: 'Equations', standard: 'NY-7.EE.4',
     stem: 'Solve: 4x &minus; 9 = 19',
     unit: '', hint: 'Whole number.', answer: ['7'] },
-  { id: 'm7-fill-02', type: 'fill', topic: 'Percent',
+  { id: 'm7-fill-02', type: 'fill', topic: 'Percent', standard: 'NY-7.RP.3',
     stem: 'What is 12% of 250?',
     unit: '', hint: 'Whole number.', answer: ['30'] },
-  { id: 'm7-fill-03', type: 'fill', topic: 'Proportion',
+  { id: 'm7-fill-03', type: 'fill', topic: 'Proportion', standard: 'NY-7.RP.2',
     stem: 'If 3 lb of apples cost $5.40, how much do 8 lb cost? Give the answer in dollars.',
     unit: '$', hint: 'Decimal.', answer: ['14.40', '$14.40', '14.4'] },
-  { id: 'm7-fill-04', type: 'fill', topic: 'Area of Circle',
+  { id: 'm7-fill-04', type: 'fill', topic: 'Area of Circle', standard: 'NY-7.G.4',
     stem: 'A circle has a radius of 7 m. Find its area in square meters. Use π ≈ ' + f(22,7) + '.',
     unit: 'sq m', hint: 'Whole number.', answer: ['154'] },
-  { id: 'm7-fill-05', type: 'fill', topic: 'Percent Change',
+  { id: 'm7-fill-05', type: 'fill', topic: 'Percent Change', standard: 'NY-7.RP.3',
     stem: 'A video game went from $60 to $75. What is the percent increase?',
     unit: '%', hint: 'Whole number.', answer: ['25', '25%'] },
 ],
 
 // ====================== GRADE 8 ======================
 8: [
-  { id: 'm8-01', type: 'mc', topic: 'Pythagorean Theorem',
+  { id: 'm8-01', type: 'mc', topic: 'Pythagorean Theorem', standard: 'NY-8.G.7',
     stem: 'A right triangle has legs of 6 and 8. What is the length of the hypotenuse?',
     choices: ['10', '12', '14', '48'], answer: 'A' },
-  { id: 'm8-02', type: 'mc', topic: 'Linear Equations',
+  { id: 'm8-02', type: 'mc', topic: 'Linear Equations', standard: 'NY-8.EE.7',
     stem: 'What is the slope of the line passing through (2, 3) and (6, 11)?',
     choices: ['1', '2', '3', '4'], answer: 'B' },
-  { id: 'm8-03', type: 'mc', topic: 'Functions',
+  { id: 'm8-03', type: 'mc', topic: 'Functions', standard: 'NY-8.F.1',
     stem: 'Which of the following is NOT a function?',
     choices: ['y = 3x + 1', 'y = x²', 'x = y²', 'y = |x|'], answer: 'C' },
-  { id: 'm8-04', type: 'mc', topic: 'Exponents',
+  { id: 'm8-04', type: 'mc', topic: 'Exponents', standard: 'NY-8.EE.1',
     stem: 'What is 2³ × 2⁴?',
     choices: ['2⁷', '2¹²', '4⁷', '4¹²'], answer: 'A' },
-  { id: 'm8-05', type: 'mc', topic: 'Scientific Notation',
+  { id: 'm8-05', type: 'mc', topic: 'Scientific Notation', standard: 'NY-8.EE.3',
     stem: 'Which number is written in scientific notation?',
     choices: ['12 × 10³', '3.4 × 10⁵', '0.7 × 10⁴', '14.5'], answer: 'B' },
-  { id: 'm8-06', type: 'mc', topic: 'Systems of Equations',
+  { id: 'm8-06', type: 'mc', topic: 'Systems of Equations', standard: 'NY-8.EE.8',
     stem: 'What is the solution to the system: y = 2x + 1 and y = x + 4?',
     choices: ['(2, 5)', '(3, 7)', '(1, 3)', '(4, 9)'], answer: 'B' },
-  { id: 'm8-07', type: 'mc', topic: 'Volume',
+  { id: 'm8-07', type: 'mc', topic: 'Volume', standard: 'NY-8.G.9',
     stem: 'A cone has a radius of 3 and a height of 4. What is its volume? Use π ≈ 3.14.',
     choices: ['12π', '16π', '36π', '12'], answer: 'A' },
-  { id: 'm8-08', type: 'mc', topic: 'Transformations',
+  { id: 'm8-08', type: 'mc', topic: 'Transformations', standard: 'NY-8.G.1',
     stem: 'A triangle is reflected across the x-axis. The point (3, 5) maps to which new point?',
     choices: ['(-3, 5)', '(3, -5)', '(-3, -5)', '(5, 3)'], answer: 'B' },
-  { id: 'm8-09', type: 'mc', topic: 'Square Roots',
+  { id: 'm8-09', type: 'mc', topic: 'Square Roots', standard: 'NY-8.EE.2',
     stem: 'Which number is between √50 and √80?',
     choices: ['6', '7', '10', '12'], answer: 'C' },
-  { id: 'm8-10', type: 'mc', topic: 'Linear Equations',
+  { id: 'm8-10', type: 'mc', topic: 'Linear Equations', standard: 'NY-8.EE.7',
     stem: 'Which is the y-intercept of the line y = -4x + 7?',
     choices: ['-4', '0', '4', '7'], answer: 'D' },
-  { id: 'm8-11', type: 'mc', topic: 'Proportional Relationships',
+  { id: 'm8-11', type: 'mc', topic: 'Proportional Relationships', standard: 'NY-8.EE.7',
     stem: 'Two lines are proportional. If one passes through (2, 6), which pair MUST be on the line?',
     choices: ['(0, 2)', '(4, 12)', '(3, 8)', '(5, 14)'], answer: 'B' },
-  { id: 'm8-12', type: 'mc', topic: 'Angles / Parallel Lines',
+  { id: 'm8-12', type: 'mc', topic: 'Angles / Parallel Lines', standard: 'NY-8.G.5',
     stem: 'Two parallel lines are cut by a transversal. One angle measures 115°. What is the measure of its corresponding angle?',
     choices: ['65°', '75°', '115°', '180°'], answer: 'C' },
-  { id: 'm8-13', type: 'mc', topic: 'Exponents',
+  { id: 'm8-13', type: 'mc', topic: 'Exponents', standard: 'NY-8.EE.1',
     stem: 'What is (5²)³?',
     choices: ['5⁵', '5⁶', '5⁸', '5⁹'], answer: 'B' },
-  { id: 'm8-14', type: 'mc', topic: 'Scatter Plots',
+  { id: 'm8-14', type: 'mc', topic: 'Scatter Plots', standard: 'NY-8.SP.1',
     stem: 'A scatter plot shows study time vs. test score, and the points rise from left to right. What kind of association does this show?',
     choices: ['Positive', 'Negative', 'No association', 'Exponential'], answer: 'A' },
-  { id: 'm8-15', type: 'mc', topic: 'Pythagorean Theorem',
+  { id: 'm8-15', type: 'mc', topic: 'Pythagorean Theorem', standard: 'NY-8.G.7',
     stem: 'A ladder leans against a wall. The base is 5 ft from the wall and the ladder reaches 12 ft high. How long is the ladder?',
     choices: ['7 ft', '13 ft', '14 ft', '17 ft'], answer: 'B' },
-  { id: 'm8-16', type: 'mc', topic: 'Functions',
+  { id: 'm8-16', type: 'mc', topic: 'Functions', standard: 'NY-8.F.1',
     stem: 'Which equation represents a linear function?',
     choices: ['y = x²', 'y = 2ˣ', 'y = 3x + 1', 'y = 1/x'], answer: 'C' },
-  { id: 'm8-17', type: 'mc', topic: 'Volume',
+  { id: 'm8-17', type: 'mc', topic: 'Volume', standard: 'NY-8.G.9',
     stem: 'A sphere has a radius of 3. What is its volume? Use V = ' + f(4,3) + 'πr³.',
     choices: ['12π', '27π', '36π', '108π'], answer: 'C' },
-  { id: 'm8-18', type: 'mc', topic: 'Linear Equations',
+  { id: 'm8-18', type: 'mc', topic: 'Linear Equations', standard: 'NY-8.EE.7',
     stem: 'Solve for x: 3(x &minus; 4) = 2x + 1',
     choices: ['13', '7', '5', '-5'], answer: 'A' },
-  { id: 'm8-19', type: 'mc', topic: 'Irrational Numbers',
+  { id: 'm8-19', type: 'mc', topic: 'Irrational Numbers', standard: 'NY-8.EE.7',
     stem: 'Which number is irrational?',
     choices: ['0.25', f(3,7), '√49', 'π'], answer: 'D' },
-  { id: 'm8-20', type: 'mc', topic: 'Systems of Equations',
+  { id: 'm8-20', type: 'mc', topic: 'Systems of Equations', standard: 'NY-8.EE.8',
     stem: 'A system has no solution. What must be true about the two lines?',
     choices: ['They cross at one point', 'They are the same line', 'They are parallel', 'They are perpendicular'], answer: 'C' },
-  { id: 'm8-fill-01', type: 'fill', topic: 'Pythagorean Theorem',
+  { id: 'm8-fill-01', type: 'fill', topic: 'Pythagorean Theorem', standard: 'NY-8.G.7',
     stem: 'A right triangle has legs of 9 and 12. What is the length of the hypotenuse?',
     unit: '', hint: 'Whole number.', answer: ['15'] },
-  { id: 'm8-fill-02', type: 'fill', topic: 'Linear Equations',
+  { id: 'm8-fill-02', type: 'fill', topic: 'Linear Equations', standard: 'NY-8.EE.7',
     stem: 'Solve for x: 2x + 7 = 3x &minus; 4',
     unit: '', hint: 'Whole number.', answer: ['11'] },
-  { id: 'm8-fill-03', type: 'fill', topic: 'Scientific Notation',
+  { id: 'm8-fill-03', type: 'fill', topic: 'Scientific Notation', standard: 'NY-8.EE.3',
     stem: 'Express 45,000 in scientific notation. Write like 4.5 x 10^4.',
     unit: '', hint: 'Use x 10^.', answer: ['4.5 x 10^4', '4.5x10^4', '4.5 × 10^4'] },
-  { id: 'm8-fill-04', type: 'fill', topic: 'Slope',
+  { id: 'm8-fill-04', type: 'fill', topic: 'Slope', standard: 'NY-8.EE.6',
     stem: 'What is the slope of the line passing through (-1, 2) and (3, 14)?',
     unit: '', hint: 'Whole number.', answer: ['3'] },
-  { id: 'm8-fill-05', type: 'fill', topic: 'Volume',
+  { id: 'm8-fill-05', type: 'fill', topic: 'Volume', standard: 'NY-8.G.9',
     stem: 'A cylinder has a radius of 5 and a height of 8. What is its volume in terms of π? (Write like 200pi)',
     unit: '', hint: 'Write as <number>pi.', answer: ['200pi', '200π'] },
 ],
@@ -1424,76 +1469,76 @@ const ELA_BANK = {
 // ====================== GRADE 3 ======================
 3: [
   // --- Passage 1: Literary ---
-  { id: 'e3-p1-01', type: 'mc', topic: 'Main Idea',
+  { id: 'e3-p1-01', type: 'mc', topic: 'Main Idea', standard: 'NY-RL.3.2',
     passage: '<strong>Mia and the Blue Bird</strong><br><br>Every morning on her way to school, Mia passed a tall oak tree. One Monday, she saw a small blue bird hopping in the grass. Its wing looked bent. Mia gently picked it up and carried it home in her hat. Her grandma helped her wrap the tiny wing with a soft bandage. For two weeks, Mia fed the bird seeds and told it stories. When the wing was strong, Mia opened her window. The blue bird sang one tiny note, then flew into the sky. Mia smiled. She knew it was the right thing to do.',
     stem: 'What is this story <strong>mostly</strong> about?',
     choices: ['Mia\'s walks to school', 'A girl who helps a hurt bird', 'How to bandage a wing', 'Mia\'s grandma'], answer: 'B' },
-  { id: 'e3-p1-02', type: 'mc', topic: 'Character', passage: 'SAME',
+  { id: 'e3-p1-02', type: 'mc', topic: 'Character', standard: 'NY-RL.3.3', passage: 'SAME',
     stem: 'Which word best describes Mia?',
     choices: ['bored', 'caring', 'angry', 'silly'], answer: 'B' },
-  { id: 'e3-p1-03', type: 'mc', topic: 'Sequence', passage: 'SAME',
+  { id: 'e3-p1-03', type: 'mc', topic: 'Sequence', standard: 'NY-RL.3.1', passage: 'SAME',
     stem: 'Which event happened LAST in the story?',
     choices: ['Mia found the bird.', 'Mia wrapped the wing.', 'The bird sang and flew.', 'Mia told the bird stories.'], answer: 'C' },
-  { id: 'e3-p1-04', type: 'mc', topic: 'Vocabulary in Context', passage: 'SAME',
+  { id: 'e3-p1-04', type: 'mc', topic: 'Vocabulary in Context', standard: 'NY-RL.3.4', passage: 'SAME',
     stem: 'In the story, the word <em>gently</em> means—',
     choices: ['quickly and hard', 'in a kind, soft way', 'with a loud shout', 'very far away'], answer: 'B' },
 
   // --- Passage 2: Informational ---
-  { id: 'e3-p2-01', type: 'mc', topic: 'Key Details',
+  { id: 'e3-p2-01', type: 'mc', topic: 'Key Details', standard: 'NY-RL.3.1',
     passage: '<strong>How Spiders Make Webs</strong><br><br>A spider makes its web with silk that comes out of its body. The silk is very thin but very strong. The spider starts by sending a thread into the wind until it sticks to something, like a branch. Then the spider builds a frame and fills it in by walking in circles. Most spiders make a new web every day because the old one gets dirty or broken. The sticky threads help the spider catch bugs to eat.',
     stem: 'Why does a spider make a new web every day?',
     choices: ['It likes to change colors.', 'The old one gets dirty or broken.', 'Other spiders steal it.', 'It is a game.'], answer: 'B' },
-  { id: 'e3-p2-02', type: 'mc', topic: 'Main Idea', passage: 'SAME',
+  { id: 'e3-p2-02', type: 'mc', topic: 'Main Idea', standard: 'NY-RL.3.2', passage: 'SAME',
     stem: 'What is the main idea of this passage?',
     choices: ['Spiders are scary bugs.', 'How spiders build their webs.', 'How spiders eat food.', 'Where spiders live.'], answer: 'B' },
-  { id: 'e3-p2-03', type: 'mc', topic: 'Text Features', passage: 'SAME',
+  { id: 'e3-p2-03', type: 'mc', topic: 'Text Features', standard: 'NY-RL.3.1', passage: 'SAME',
     stem: 'Which would be the BEST title for this passage?',
     choices: ['Dangerous Spiders', 'Spider Web-Building Steps', 'The Biggest Spider', 'Why Spiders Are Scary'], answer: 'B' },
-  { id: 'e3-p2-04', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e3-p2-04', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.3.4', passage: 'SAME',
     stem: 'The word <em>frame</em> in paragraph 2 means—',
     choices: ['a picture', 'the outside shape that holds the web together', 'a small insect', 'a strong wind'], answer: 'B' },
 
   // --- Passage 3: Literary (Poem) ---
-  { id: 'e3-p3-01', type: 'mc', topic: 'Poetry / Theme',
+  { id: 'e3-p3-01', type: 'mc', topic: 'Poetry / Theme', standard: 'NY-RL.3.2',
     passage: '<strong>My Dog Buster</strong><br><br>My dog Buster runs so fast,<br>Chasing leaves that float past.<br>He barks at birds up in the sky,<br>And wags his tail when I walk by.<br>At night he curls beside my feet,<br>My furry friend, my best heartbeat.',
     stem: 'What is the poem MOSTLY about?',
     choices: ['A dog catching a ball', 'A boy\'s love for his dog', 'Birds in a tree', 'Night time routines'], answer: 'B' },
-  { id: 'e3-p3-02', type: 'mc', topic: 'Rhyme', passage: 'SAME',
+  { id: 'e3-p3-02', type: 'mc', topic: 'Rhyme', standard: 'NY-RL.3.1', passage: 'SAME',
     stem: 'Which two words rhyme in the poem?',
     choices: ['fast and past', 'sky and feet', 'runs and curls', 'dog and cat'], answer: 'A' },
-  { id: 'e3-p3-03', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e3-p3-03', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.3.4', passage: 'SAME',
     stem: 'What does the speaker mean by "my best heartbeat"?',
     choices: ['The dog is a doctor.', 'The dog is very important to the speaker.', 'The dog\'s heart beats slow.', 'The dog is asleep.'], answer: 'B' },
 
   // --- Standalone Language/Grammar ---
-  { id: 'e3-lang-01', type: 'mc', topic: 'Language/Grammar',
+  { id: 'e3-lang-01', type: 'mc', topic: 'Language/Grammar', standard: 'NY-L.3.1',
     stem: 'Which sentence is written correctly?',
     choices: ['the cat ran fast.', 'The cat ran fast.', 'The Cat ran fast', 'the Cat ran fast.'], answer: 'B' },
-  { id: 'e3-lang-02', type: 'mc', topic: 'Language/Plural Nouns',
+  { id: 'e3-lang-02', type: 'mc', topic: 'Language/Plural Nouns', standard: 'NY-RL.3.1',
     stem: 'Which is the correct plural of <em>mouse</em>?',
     choices: ['mouses', 'mices', 'mice', 'mouse\'s'], answer: 'C' },
-  { id: 'e3-lang-03', type: 'mc', topic: 'Verb Tense',
+  { id: 'e3-lang-03', type: 'mc', topic: 'Verb Tense', standard: 'NY-RL.3.1',
     stem: 'Which word is a past-tense verb?',
     choices: ['run', 'running', 'ran', 'runs'], answer: 'C' },
-  { id: 'e3-lang-04', type: 'mc', topic: 'Vocabulary / Synonyms',
+  { id: 'e3-lang-04', type: 'mc', topic: 'Vocabulary / Synonyms', standard: 'NY-RL.3.4',
     stem: 'Which word means almost the SAME as <em>happy</em>?',
     choices: ['sad', 'joyful', 'tired', 'angry'], answer: 'B' },
-  { id: 'e3-lang-05', type: 'mc', topic: 'Punctuation',
+  { id: 'e3-lang-05', type: 'mc', topic: 'Punctuation', standard: 'NY-L.3.2',
     stem: 'Which sentence uses punctuation correctly?',
     choices: ['Do you like pizza.', 'Do you like pizza?', 'Do you like pizza!', 'Do you like pizza,'], answer: 'B' },
-  { id: 'e3-lang-06', type: 'mc', topic: 'Context Clues',
+  { id: 'e3-lang-06', type: 'mc', topic: 'Context Clues', standard: 'NY-RL.3.4',
     stem: 'The glass was <em>fragile</em>, so Mom carried it carefully. What does <em>fragile</em> mean?',
     choices: ['heavy', 'easy to break', 'full of water', 'cold'], answer: 'B' },
-  { id: 'e3-lang-07', type: 'mc', topic: 'Prefixes',
+  { id: 'e3-lang-07', type: 'mc', topic: 'Prefixes', standard: 'NY-RL.3.1',
     stem: 'The prefix <em>un-</em> means "not". What does <em>unhappy</em> mean?',
     choices: ['very happy', 'not happy', 'happy again', 'always happy'], answer: 'B' },
-  { id: 'e3-lang-08', type: 'mc', topic: 'Nouns vs Verbs',
+  { id: 'e3-lang-08', type: 'mc', topic: 'Nouns vs Verbs', standard: 'NY-RL.3.1',
     stem: 'In the sentence "The bird <em>sings</em> loudly," what part of speech is <em>sings</em>?',
     choices: ['noun', 'verb', 'adjective', 'adverb'], answer: 'B' },
-  { id: 'e3-fill-01', type: 'fill', topic: 'Writing Short Response',
+  { id: 'e3-fill-01', type: 'fill', topic: 'Writing Short Response', standard: 'NY-W.3.2',
     stem: 'Write ONE complete sentence that tells your favorite season and one reason why. (Example: "Summer is my favorite season because I can swim.")',
     unit: '', hint: 'Write a full sentence with a capital letter and ending punctuation.', answer: [] },
-  { id: 'e3-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e3-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.3.4',
     stem: 'Read the sentence: "The baby goat was so <em>tiny</em> it fit in my hand." Write a word that means almost the SAME as <em>tiny</em>.',
     unit: '', hint: 'One word is fine.', answer: ['small', 'little', 'mini', 'teeny'] },
 ],
@@ -1501,17 +1546,17 @@ const ELA_BANK = {
 // ====================== GRADE 4 ======================
 4: [
   // --- Passage 1: Informational ---
-  { id: 'e4-p1-01', type: 'mc', topic: 'Main Idea',
+  { id: 'e4-p1-01', type: 'mc', topic: 'Main Idea', standard: 'NY-RL.4.2',
     passage: '<strong>The Amazing Octopus</strong><br><br>The octopus is one of the smartest creatures in the ocean. It has eight arms, three hearts, and blue blood. An octopus can change color in less than a second to match almost anything around it. This helps it hide from sharks and sneak up on crabs. Octopuses can also solve problems. Scientists have watched them open jars, squeeze through tiny cracks, and even unscrew lids to get a snack. Most octopuses live alone and only meet others to mate. Their lives are short — only about one to two years — but each day is filled with cleverness.',
     stem: 'What is the main idea of the passage?',
     choices: ['Octopuses live a long time.', 'Octopuses are smart and have amazing abilities.', 'Sharks eat octopuses.', 'Octopuses only eat crabs.'], answer: 'B' },
-  { id: 'e4-p1-02', type: 'mc', topic: 'Supporting Details', passage: 'SAME',
+  { id: 'e4-p1-02', type: 'mc', topic: 'Supporting Details', standard: 'NY-RL.4.1', passage: 'SAME',
     stem: 'According to the passage, why can an octopus change color?',
     choices: ['To look pretty', 'To hide and to hunt', 'To communicate with other octopuses', 'To stay warm'], answer: 'B' },
-  { id: 'e4-p1-03', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e4-p1-03', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.4.4', passage: 'SAME',
     stem: 'Which word best matches <em>cleverness</em> as used in the last sentence?',
     choices: ['luck', 'smartness', 'size', 'beauty'], answer: 'B' },
-  { id: 'e4-p1-04', type: 'mc', topic: 'Inference', passage: 'SAME',
+  { id: 'e4-p1-04', type: 'mc', topic: 'Inference', standard: 'NY-RL.4.1', passage: 'SAME',
     stem: 'Which detail supports the idea that octopuses can solve problems?',
     choices: ['They have three hearts.', 'They live alone.', 'They can open jars and unscrew lids.', 'They have blue blood.'], answer: 'C' },
   { id: 'e4-p1-05', type: 'mc', topic: 'Author\'s Purpose', passage: 'SAME',
@@ -1519,55 +1564,55 @@ const ELA_BANK = {
     choices: ['make readers laugh', 'teach readers about octopuses', 'warn readers about sea dangers', 'sell pet octopuses'], answer: 'B' },
 
   // --- Passage 2: Literary ---
-  { id: 'e4-p2-01', type: 'mc', topic: 'Plot / Conflict',
+  { id: 'e4-p2-01', type: 'mc', topic: 'Plot / Conflict', standard: 'NY-RL.4.3',
     passage: '<strong>The Stuck Kite</strong><br><br>Jayden ran across the grass, his new red kite trailing behind him. For a moment it lifted, soared, and dipped in the wind. Then with a sudden jerk, the kite caught in the highest branch of the old oak tree.<br><br>"Oh no!" Jayden whispered. The string drooped like a sad smile. He pulled. He tugged. Nothing moved.<br><br>His older sister, Sara, sat down next to him. "Let\'s think," she said. She looked up at the tree. "If we tie a heavy stick to the string and throw it over the branch, we might pull it down."<br><br>It took three tries, but the kite finally came loose and floated back into Jayden\'s hands. Sara grinned. "Problem-solving beats panicking," she said. Jayden hugged her.',
     stem: 'What is the MAIN problem in the story?',
     choices: ['Sara cannot fly a kite.', 'Jayden\'s kite is stuck in a tree.', 'The wind is too strong.', 'Jayden lost his string.'], answer: 'B' },
-  { id: 'e4-p2-02', type: 'mc', topic: 'Character', passage: 'SAME',
+  { id: 'e4-p2-02', type: 'mc', topic: 'Character', standard: 'NY-RL.4.3', passage: 'SAME',
     stem: 'Which word BEST describes Sara?',
     choices: ['silly', 'helpful', 'mean', 'scared'], answer: 'B' },
-  { id: 'e4-p2-03', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e4-p2-03', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.4.4', passage: 'SAME',
     stem: 'When the author says "the string drooped like a sad smile," this is an example of—',
     choices: ['rhyme', 'a simile', 'a fact', 'dialogue'], answer: 'B' },
-  { id: 'e4-p2-04', type: 'mc', topic: 'Theme', passage: 'SAME',
+  { id: 'e4-p2-04', type: 'mc', topic: 'Theme', standard: 'NY-RL.4.2', passage: 'SAME',
     stem: 'What lesson does the story teach?',
     choices: ['Kites are too dangerous.', 'Thinking is better than panicking.', 'Never play outside.', 'Trees are bad.'], answer: 'B' },
-  { id: 'e4-p2-05', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e4-p2-05', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.4.4', passage: 'SAME',
     stem: 'In the story, <em>soared</em> means—',
     choices: ['dropped', 'flew high', 'yelled', 'tore'], answer: 'B' },
 
   // --- Paired-text short question ---
-  { id: 'e4-p3-01', type: 'mc', topic: 'Compare Texts',
+  { id: 'e4-p3-01', type: 'mc', topic: 'Compare Texts', standard: 'NY-RL.4.1',
     passage: 'Both "The Amazing Octopus" and "The Stuck Kite" involve problem-solving. Answer based on what you read in BOTH passages.',
     stem: 'In both passages, problems are solved by—',
     choices: ['waiting for help', 'using smart thinking', 'running away', 'crying'], answer: 'B' },
 
   // --- Language/Grammar ---
-  { id: 'e4-lang-01', type: 'mc', topic: 'Homophones',
+  { id: 'e4-lang-01', type: 'mc', topic: 'Homophones', standard: 'NY-RL.4.1',
     stem: 'Which sentence uses the correct word?',
     choices: ['Their going to the park.', 'They\'re going to the park.', 'There going to the park.', 'They going to the park.'], answer: 'B' },
-  { id: 'e4-lang-02', type: 'mc', topic: 'Subject-Verb Agreement',
+  { id: 'e4-lang-02', type: 'mc', topic: 'Subject-Verb Agreement', standard: 'NY-RL.4.1',
     stem: 'Which sentence has correct subject-verb agreement?',
     choices: ['The dogs barks all night.', 'The dogs bark all night.', 'The dog bark all night.', 'The dog barking all night.'], answer: 'B' },
-  { id: 'e4-lang-03', type: 'mc', topic: 'Prefixes',
+  { id: 'e4-lang-03', type: 'mc', topic: 'Prefixes', standard: 'NY-RL.4.1',
     stem: 'What does the word <em>preheat</em> mean?',
     choices: ['heat after', 'heat before', 'heat again', 'not heat'], answer: 'B' },
-  { id: 'e4-lang-04', type: 'mc', topic: 'Suffixes',
+  { id: 'e4-lang-04', type: 'mc', topic: 'Suffixes', standard: 'NY-RL.4.1',
     stem: 'The suffix <em>-less</em> means "without". What does <em>fearless</em> mean?',
     choices: ['very afraid', 'without fear', 'making fear', 'full of fear'], answer: 'B' },
-  { id: 'e4-lang-05', type: 'mc', topic: 'Adjective vs Adverb',
+  { id: 'e4-lang-05', type: 'mc', topic: 'Adjective vs Adverb', standard: 'NY-RL.4.1',
     stem: 'In "The cat ran <em>quickly</em> across the yard," what part of speech is <em>quickly</em>?',
     choices: ['noun', 'verb', 'adjective', 'adverb'], answer: 'D' },
-  { id: 'e4-lang-06', type: 'mc', topic: 'Dialogue Punctuation',
+  { id: 'e4-lang-06', type: 'mc', topic: 'Dialogue Punctuation', standard: 'NY-L.4.2',
     stem: 'Which sentence uses quotation marks correctly?',
     choices: ['"Come here, he said.', 'Come here, "he said."', '"Come here," he said.', '"Come here he said."'], answer: 'C' },
-  { id: 'e4-lang-07', type: 'mc', topic: 'Antonyms',
+  { id: 'e4-lang-07', type: 'mc', topic: 'Antonyms', standard: 'NY-RL.4.1',
     stem: 'Which word is the OPPOSITE of <em>ancient</em>?',
     choices: ['old', 'modern', 'broken', 'heavy'], answer: 'B' },
-  { id: 'e4-fill-01', type: 'fill', topic: 'Writing',
+  { id: 'e4-fill-01', type: 'fill', topic: 'Writing', standard: 'NY-W.4.2',
     stem: 'Write a topic sentence that would start a paragraph about WHY recess is important. (One complete sentence.)',
     unit: '', hint: 'A good topic sentence states your main idea.', answer: [] },
-  { id: 'e4-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e4-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.4.4',
     stem: 'Read: "The old boat was <em>decrepit</em> and almost fell apart." Use context to give a word that means about the same as <em>decrepit</em>.',
     unit: '', hint: 'One word.', answer: ['old', 'worn', 'broken', 'shabby', 'falling apart'] },
 ],
@@ -1575,70 +1620,70 @@ const ELA_BANK = {
 // ====================== GRADE 5 ======================
 5: [
   // --- Passage 1: Informational ---
-  { id: 'e5-p1-01', type: 'mc', topic: 'Main Idea',
+  { id: 'e5-p1-01', type: 'mc', topic: 'Main Idea', standard: 'NY-RL.5.2',
     passage: '<strong>The Life of Harriet Tubman</strong><br><br>Harriet Tubman was born into slavery in Maryland around 1822. At age 27, she escaped to freedom in Philadelphia. But she did not stop there. Over the next ten years, she returned to the South at least 13 times to guide more than 70 enslaved people — including family members — to freedom using a secret network called the Underground Railroad. During the Civil War, Tubman worked as a nurse, cook, and spy for the Union Army. Later in life, she fought for women\'s right to vote. Tubman never learned to read or write, yet she changed American history. She once said, "I had crossed the line. I was free; but there was no one to welcome me to the land of freedom." That loneliness drove her to help others.',
     stem: 'Which statement BEST expresses the main idea of the passage?',
     choices: ['Tubman escaped slavery and lived alone.', 'Tubman escaped slavery and then spent her life fighting for the freedom and rights of others.', 'Tubman taught herself to read and write.', 'Tubman was a spy during the Civil War.'], answer: 'B' },
-  { id: 'e5-p1-02', type: 'mc', topic: 'Supporting Evidence', passage: 'SAME',
+  { id: 'e5-p1-02', type: 'mc', topic: 'Supporting Evidence', standard: 'NY-RL.5.1', passage: 'SAME',
     stem: 'Which detail BEST supports the idea that Tubman was courageous?',
     choices: ['She was born in Maryland.', 'She returned to the South at least 13 times to help others escape.', 'She couldn\'t read or write.', 'She lived a long life.'], answer: 'B' },
-  { id: 'e5-p1-03', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e5-p1-03', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.5.4', passage: 'SAME',
     stem: 'As used in the passage, the word <em>network</em> means—',
     choices: ['a TV channel', 'a connected system of people and places', 'a computer', 'a family'], answer: 'B' },
   { id: 'e5-p1-04', type: 'mc', topic: 'Author\'s Purpose', passage: 'SAME',
     stem: 'Why does the author include Tubman\'s own quote at the end?',
     choices: ['To show she was wealthy', 'To show what motivated her to help others', 'To prove she could write', 'To describe Maryland'], answer: 'B' },
-  { id: 'e5-p1-05', type: 'mc', topic: 'Text Structure', passage: 'SAME',
+  { id: 'e5-p1-05', type: 'mc', topic: 'Text Structure', standard: 'NY-RI.5.5', passage: 'SAME',
     stem: 'How is this passage MOSTLY organized?',
     choices: ['Cause and effect', 'Compare and contrast', 'Chronological order', 'Problem and solution'], answer: 'C' },
 
   // --- Passage 2: Literary ---
-  { id: 'e5-p2-01', type: 'mc', topic: 'Theme',
+  { id: 'e5-p2-01', type: 'mc', topic: 'Theme', standard: 'NY-RL.5.2',
     passage: '<strong>The Locked Garden</strong><br><br>For as long as Tess could remember, the garden behind her grandmother\'s house had been off limits. A tall wooden gate, weathered gray by rain and sun, stood bolted shut. "Someday," Grandma would say, smiling strangely, "you will be ready."<br><br>On her twelfth birthday, Grandma handed Tess a small iron key wrapped in a handkerchief. "Go on, love." Tess\'s heart thudded as she crossed the yard and turned the key. The gate groaned open to reveal — not a magical world, but an ordinary tangle of overgrown weeds, crumbling stone, and a single broken swing.<br><br>Tess\'s face fell. Grandma appeared beside her. "I know. Not what you expected. But every summer from now, we rebuild it together — a little at a time. One corner at a time, we make it our own." Tess looked again. Suddenly the weeds looked less like a mess and more like a beginning.',
     stem: 'Which statement BEST describes the theme of the story?',
     choices: ['Patience is unnecessary.', 'Something ordinary can become meaningful when you work on it together.', 'Gardens are always magical.', 'Grandmothers know everything.'], answer: 'B' },
-  { id: 'e5-p2-02', type: 'mc', topic: 'Character Development', passage: 'SAME',
+  { id: 'e5-p2-02', type: 'mc', topic: 'Character Development', standard: 'NY-RL.5.3', passage: 'SAME',
     stem: 'How does Tess\'s feeling change during the story?',
     choices: ['From excited to disappointed to hopeful', 'From scared to happy', 'From angry to sad', 'From bored to sleepy'], answer: 'A' },
-  { id: 'e5-p2-03', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e5-p2-03', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.5.4', passage: 'SAME',
     stem: '"The gate groaned open" is an example of—',
     choices: ['hyperbole', 'personification', 'a fact', 'alliteration'], answer: 'B' },
-  { id: 'e5-p2-04', type: 'mc', topic: 'Setting', passage: 'SAME',
+  { id: 'e5-p2-04', type: 'mc', topic: 'Setting', standard: 'NY-RL.5.3', passage: 'SAME',
     stem: 'Which detail from the story BEST supports that the garden has been locked for a LONG time?',
     choices: ['"Grandma appeared beside her."', '"weathered gray by rain and sun"', '"Tess looked again."', '"Go on, love."'], answer: 'B' },
 
   // --- Paired-text question ---
-  { id: 'e5-p3-01', type: 'mc', topic: 'Compare Texts',
+  { id: 'e5-p3-01', type: 'mc', topic: 'Compare Texts', standard: 'NY-RL.5.1',
     passage: 'Consider both "The Life of Harriet Tubman" and "The Locked Garden."',
     stem: 'What idea do both passages share?',
     choices: ['Freedom is found in nature.', 'Change takes time and effort.', 'Grandmothers are important.', 'All problems are easy.'], answer: 'B' },
 
   // --- Language/Grammar ---
-  { id: 'e5-lang-01', type: 'mc', topic: 'Sentence Types',
+  { id: 'e5-lang-01', type: 'mc', topic: 'Sentence Types', standard: 'NY-RL.5.1',
     stem: 'Which is a complete sentence?',
     choices: ['Running down the hill at sunset.', 'She ran down the hill at sunset.', 'The hill at sunset.', 'Down the hill and then.'], answer: 'B' },
-  { id: 'e5-lang-02', type: 'mc', topic: 'Commas',
+  { id: 'e5-lang-02', type: 'mc', topic: 'Commas', standard: 'NY-RL.5.1',
     stem: 'Which sentence uses commas correctly?',
     choices: ['I bought apples, grapes and, bread.', 'I bought apples grapes, and bread.', 'I bought apples, grapes, and bread.', 'I bought, apples, grapes, and bread.'], answer: 'C' },
-  { id: 'e5-lang-03', type: 'mc', topic: 'Pronouns',
+  { id: 'e5-lang-03', type: 'mc', topic: 'Pronouns', standard: 'NY-RL.5.1',
     stem: 'Which sentence uses the correct pronoun?',
     choices: ['Her and me went to the store.', 'Me and her went to the store.', 'She and I went to the store.', 'Her and I went to the store.'], answer: 'C' },
-  { id: 'e5-lang-04', type: 'mc', topic: 'Verb Tense',
+  { id: 'e5-lang-04', type: 'mc', topic: 'Verb Tense', standard: 'NY-RL.5.1',
     stem: 'Choose the verb that keeps the tense consistent: "Maya <strong>walked</strong> to the park and _____ on the bench."',
     choices: ['sits', 'is sitting', 'sat', 'will sit'], answer: 'C' },
-  { id: 'e5-lang-05', type: 'mc', topic: 'Context Clues',
+  { id: 'e5-lang-05', type: 'mc', topic: 'Context Clues', standard: 'NY-RL.5.4',
     stem: 'Read: "The chef\'s <em>impeccable</em> suit had not a single wrinkle or spot." The word <em>impeccable</em> most likely means—',
     choices: ['messy', 'flawless', 'loose', 'bright'], answer: 'B' },
-  { id: 'e5-lang-06', type: 'mc', topic: 'Root Words',
+  { id: 'e5-lang-06', type: 'mc', topic: 'Root Words', standard: 'NY-RL.5.1',
     stem: 'The Greek root <em>photo</em> means "light." Which word relates to light?',
     choices: ['photograph', 'phonograph', 'photon — no such word', 'philosophy'], answer: 'A' },
-  { id: 'e5-lang-07', type: 'mc', topic: 'Figurative Language',
+  { id: 'e5-lang-07', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.5.4',
     stem: 'Which sentence contains a METAPHOR?',
     choices: ['The road was as long as a snake.', 'The classroom was a zoo.', 'The wind blew hard.', 'We sat on the porch.'], answer: 'B' },
-  { id: 'e5-fill-01', type: 'fill', topic: 'Writing Claim',
+  { id: 'e5-fill-01', type: 'fill', topic: 'Writing Claim', standard: 'NY-W.5.2',
     stem: 'After reading "The Life of Harriet Tubman," write ONE sentence that states a claim about Tubman\'s character, using a trait word.',
     unit: '', hint: 'Example: "Harriet Tubman was determined because..."', answer: [] },
-  { id: 'e5-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e5-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.5.4',
     stem: 'The word <em>ancestor</em> means a family member who lived long before you. What is an ANTONYM for <em>ancestor</em>? (One word.)',
     unit: '', hint: 'Opposite.', answer: ['descendant', 'descendent'] },
 ],
@@ -1646,17 +1691,17 @@ const ELA_BANK = {
 // ====================== GRADE 6 ======================
 6: [
   // --- Passage 1: Informational ---
-  { id: 'e6-p1-01', type: 'mc', topic: 'Main Idea',
+  { id: 'e6-p1-01', type: 'mc', topic: 'Main Idea', standard: 'NY-RL.6.2',
     passage: '<strong>The Return of the Gray Wolf</strong><br><br>In 1995, scientists released 14 gray wolves into Yellowstone National Park. Wolves had been wiped out from the park nearly 70 years earlier after being hunted to keep them away from livestock. Without the wolves, the elk population exploded. Elk ate so many young trees along rivers that beavers lost their building materials, songbirds lost their nesting spots, and the rivers themselves began eroding their banks.<br><br>Once wolves returned, they kept elk on the move, and young trees grew back. Beavers came back. Riverbanks became stable. Scientists call this chain reaction a "trophic cascade" — when a top predator shapes the entire ecosystem. The Yellowstone experiment showed the world that every species in an ecosystem plays a role, even if that role is hard to see.',
     stem: 'Which sentence BEST expresses the central idea?',
     choices: ['Gray wolves are dangerous animals.', 'Bringing wolves back to Yellowstone showed how one species can reshape an entire ecosystem.', 'Yellowstone was created in 1995.', 'Elk eat too much.'], answer: 'B' },
-  { id: 'e6-p1-02', type: 'mc', topic: 'Cause and Effect', passage: 'SAME',
+  { id: 'e6-p1-02', type: 'mc', topic: 'Cause and Effect', standard: 'NY-RL.6.1', passage: 'SAME',
     stem: 'According to the passage, what was one EFFECT of wolves being gone from Yellowstone?',
     choices: ['More songbirds nested in the trees.', 'The elk population grew too large.', 'Beavers multiplied.', 'Rivers became calmer.'], answer: 'B' },
-  { id: 'e6-p1-03', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e6-p1-03', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.6.4', passage: 'SAME',
     stem: 'In the passage, the word <em>eroding</em> most likely means—',
     choices: ['growing taller', 'wearing away', 'freezing over', 'drying up'], answer: 'B' },
-  { id: 'e6-p1-04', type: 'mc', topic: 'Text Structure', passage: 'SAME',
+  { id: 'e6-p1-04', type: 'mc', topic: 'Text Structure', standard: 'NY-RI.6.5', passage: 'SAME',
     stem: 'The passage is MOSTLY organized as—',
     choices: ['problem and solution', 'compare and contrast', 'chronological sequence', 'descriptive only'], answer: 'A' },
   { id: 'e6-p1-05', type: 'mc', topic: 'Author\'s Claim', passage: 'SAME',
@@ -1664,52 +1709,52 @@ const ELA_BANK = {
     choices: ['Wolves are more important than elk.', 'Every species in an ecosystem has a role.', 'Scientists make mistakes.', 'Rivers need to move.'], answer: 'B' },
 
   // --- Passage 2: Literary ---
-  { id: 'e6-p2-01', type: 'mc', topic: 'Plot',
+  { id: 'e6-p2-01', type: 'mc', topic: 'Plot', standard: 'NY-RL.6.3',
     passage: '<strong>Crossing the Line</strong><br><br>The finish line was twenty feet away, and Ana\'s lungs felt like hot paper. Behind her, she heard Lin\'s footsteps closing in — <em>tap tap tap</em> — like a timer counting down.<br><br>Lin was her best friend. They had trained together all summer. But only one of them could win the medal.<br><br>Ten feet. Five.<br><br>Ana remembered Coach\'s voice: <em>Your only competition is yesterday\'s you.</em> She pushed. She crossed the line — and glanced back. Lin was a step behind, smiling, both hands on her knees, gasping.<br><br>"You did it," Lin panted.<br><br>"WE did it," Ana said, her voice shaking. She pulled Lin into a hug. The medal, it turned out, wasn\'t the part she\'d remember.',
     stem: 'Which is the BEST summary of the story?',
     choices: ['Ana trains with Lin for a summer race.', 'Ana wins a race against her best friend and realizes their friendship matters more than the medal.', 'Lin beats Ana in a race.', 'Ana remembers her coach\'s advice.'], answer: 'B' },
-  { id: 'e6-p2-02', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e6-p2-02', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.6.4', passage: 'SAME',
     stem: '"Her lungs felt like hot paper" is an example of—',
     choices: ['a fact', 'personification', 'a simile', 'alliteration'], answer: 'C' },
-  { id: 'e6-p2-03', type: 'mc', topic: 'Theme', passage: 'SAME',
+  { id: 'e6-p2-03', type: 'mc', topic: 'Theme', standard: 'NY-RL.6.2', passage: 'SAME',
     stem: 'Which statement BEST describes the theme?',
     choices: ['Always beat your best friend.', 'Winning is everything.', 'Shared effort means more than the prize.', 'Never trust a coach.'], answer: 'C' },
-  { id: 'e6-p2-04', type: 'mc', topic: 'Point of View', passage: 'SAME',
+  { id: 'e6-p2-04', type: 'mc', topic: 'Point of View', standard: 'NY-RL.6.6', passage: 'SAME',
     stem: 'The passage is told from what point of view?',
     choices: ['First person from Lin\'s view', 'Third person limited, focused on Ana', 'First person from the coach', 'Second person'], answer: 'B' },
 
   // --- Paired-text ---
-  { id: 'e6-p3-01', type: 'mc', topic: 'Compare Themes',
+  { id: 'e6-p3-01', type: 'mc', topic: 'Compare Themes', standard: 'NY-RL.6.2',
     passage: 'Compare "The Return of the Gray Wolf" and "Crossing the Line."',
     stem: 'Both passages show how—',
     choices: ['individuals and parts work together in a larger system', 'nature is always dangerous', 'competition causes problems', 'friendship can replace hard work'], answer: 'A' },
 
   // --- Language/Grammar ---
-  { id: 'e6-lang-01', type: 'mc', topic: 'Pronoun Case',
+  { id: 'e6-lang-01', type: 'mc', topic: 'Pronoun Case', standard: 'NY-RL.6.1',
     stem: 'Which sentence uses pronouns correctly?',
     choices: ['Me and my brother went to camp.', 'My brother and I went to camp.', 'My brother and me went to camp.', 'I and my brother went to camp.'], answer: 'B' },
-  { id: 'e6-lang-02', type: 'mc', topic: 'Verbs',
+  { id: 'e6-lang-02', type: 'mc', topic: 'Verbs', standard: 'NY-RL.6.1',
     stem: 'Which verb form completes the sentence correctly? "If I <em>_____</em> a dog, I would name him Pip."',
     choices: ['have', 'had', 'has', 'having'], answer: 'B' },
-  { id: 'e6-lang-03', type: 'mc', topic: 'Commas in Complex Sentences',
+  { id: 'e6-lang-03', type: 'mc', topic: 'Commas in Complex Sentences', standard: 'NY-RL.6.1',
     stem: 'Which sentence is punctuated correctly?',
     choices: ['Because it rained, we stayed inside.', 'Because it rained we stayed inside.', 'Because it rained, we, stayed inside.', 'Because, it rained we stayed inside.'], answer: 'A' },
-  { id: 'e6-lang-04', type: 'mc', topic: 'Word Choice',
+  { id: 'e6-lang-04', type: 'mc', topic: 'Word Choice', standard: 'NY-RL.6.1',
     stem: 'Which word choice BEST improves this sentence: "The food was <em>good</em>."',
     choices: ['okay', 'delicious', 'nice', 'food'], answer: 'B' },
-  { id: 'e6-lang-05', type: 'mc', topic: 'Context Clues',
+  { id: 'e6-lang-05', type: 'mc', topic: 'Context Clues', standard: 'NY-RL.6.4',
     stem: 'Read: "Her <em>meticulous</em> notes showed that she had double-checked every detail." The word <em>meticulous</em> means—',
     choices: ['careless', 'extremely careful', 'short', 'colorful'], answer: 'B' },
-  { id: 'e6-lang-06', type: 'mc', topic: 'Roots',
+  { id: 'e6-lang-06', type: 'mc', topic: 'Roots', standard: 'NY-RL.6.1',
     stem: 'The Latin root <em>aud</em> means "hear". Which word relates to hearing?',
     choices: ['audible', 'visual', 'tactile', 'aroma'], answer: 'A' },
-  { id: 'e6-lang-07', type: 'mc', topic: 'Figurative Language',
+  { id: 'e6-lang-07', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.6.4',
     stem: 'Which sentence contains PERSONIFICATION?',
     choices: ['The wind whispered through the trees.', 'The tree was tall.', 'She whispered to her friend.', 'It was a windy day.'], answer: 'A' },
-  { id: 'e6-fill-01', type: 'fill', topic: 'Writing Evidence',
+  { id: 'e6-fill-01', type: 'fill', topic: 'Writing Evidence', standard: 'NY-RL.6.1',
     stem: 'Using "The Return of the Gray Wolf," write ONE sentence explaining what scientists learned, using one detail from the passage.',
     unit: '', hint: 'Include a fact from the passage.', answer: [] },
-  { id: 'e6-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e6-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.6.4',
     stem: 'The word <em>predator</em> from the passage means an animal that hunts other animals. Write a word that means the OPPOSITE — an animal that is hunted.',
     unit: '', hint: 'One word.', answer: ['prey'] },
 ],
@@ -1717,70 +1762,70 @@ const ELA_BANK = {
 // ====================== GRADE 7 ======================
 7: [
   // --- Passage 1: Informational ---
-  { id: 'e7-p1-01', type: 'mc', topic: 'Central Idea',
+  { id: 'e7-p1-01', type: 'mc', topic: 'Central Idea', standard: 'NY-RI.7.2',
     passage: '<strong>The Quiet Influence of Dolores Huerta</strong><br><br>Most Americans know the name Cesar Chavez, the farm-worker organizer who led the grape boycott of the late 1960s. Fewer recognize the woman who marched beside him, negotiated the contracts, and coined the movement\'s rallying cry — "Sí, se puede" ("Yes, we can"). Her name is Dolores Huerta.<br><br>Born in 1930, Huerta grew up watching her mother run a small hotel where farmworkers were welcomed with dignity. When she became a teacher in the 1950s, she was troubled that her students came to class barefoot and hungry. She left the classroom to organize their parents. In 1962, she and Chavez co-founded the United Farm Workers. While Chavez became the movement\'s public face, Huerta was its lead lobbyist and contract negotiator, fighting for the first laws to protect migrant workers from toxic pesticides, to give them paid rest breaks, and to set a minimum wage.<br><br>Huerta was arrested more than twenty times. At age 58, police beat her so badly she needed surgery. Still she did not stop. In her nineties, she continues to speak at rallies, reminding young activists that change requires patience and pressure — not fame.',
     stem: 'Which BEST states the central idea of the passage?',
     choices: ['Chavez was more important than Huerta.', 'Huerta was a critical but often overlooked leader of the farmworker movement.', 'Huerta was a teacher who quit in frustration.', 'Farmworkers do not need laws to protect them.'], answer: 'B' },
   { id: 'e7-p1-02', type: 'mc', topic: 'Author\'s Purpose', passage: 'SAME',
     stem: 'Why does the author open the passage by naming Cesar Chavez?',
     choices: ['To praise Chavez over Huerta', 'To contrast what is well-known with what is often forgotten', 'Because Chavez is the subject of the passage', 'To confuse the reader'], answer: 'B' },
-  { id: 'e7-p1-03', type: 'mc', topic: 'Supporting Evidence', passage: 'SAME',
+  { id: 'e7-p1-03', type: 'mc', topic: 'Supporting Evidence', standard: 'NY-RL.7.1', passage: 'SAME',
     stem: 'Which detail BEST supports the claim that Huerta was persistent?',
     choices: ['She was born in 1930.', 'Police beat her at age 58, yet she kept organizing.', 'She taught for a short time.', 'She grew up in a hotel.'], answer: 'B' },
-  { id: 'e7-p1-04', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e7-p1-04', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.7.4', passage: 'SAME',
     stem: 'As used in the passage, <em>lobbyist</em> most nearly means a person who—',
     choices: ['organizes parties', 'tries to influence lawmakers', 'writes newspapers', 'teaches classes'], answer: 'B' },
-  { id: 'e7-p1-05', type: 'mc', topic: 'Rhetorical Choices', passage: 'SAME',
+  { id: 'e7-p1-05', type: 'mc', topic: 'Rhetorical Choices', standard: 'NY-RL.7.1', passage: 'SAME',
     stem: 'The author ends with Huerta\'s advice about "patience and pressure" MOST LIKELY to—',
     choices: ['discourage activism', 'leave readers with a lesson about how real change happens', 'prove that she is old', 'suggest that she is tired'], answer: 'B' },
 
   // --- Passage 2: Literary ---
-  { id: 'e7-p2-01', type: 'mc', topic: 'Theme',
+  { id: 'e7-p2-01', type: 'mc', topic: 'Theme', standard: 'NY-RL.7.2',
     passage: '<strong>The Lighthouse Keeper\'s Daughter</strong><br><br>Nora had memorized the lighthouse\'s 217 spiral steps before she could spell her own name. Her father was the keeper of Gullsend Point; the tower was their job and their home. On the night the storm hit, her father slipped on the wet steps and broke his leg. The lamp above still needed lighting, or the ships would never find the channel.<br><br>Nora was eleven.<br><br>"I can do it," she said, before fear could speak louder.<br><br>She climbed into darkness, her lantern shaking with every gust. At the top she pumped the oil the way she had watched her father do a thousand times, struck the match on the third try, and the great lens bloomed with yellow light. Below, on the black sea, a distant freighter answered with a long, grateful horn.<br><br>Her father was waiting at the bottom when she came down. He did not scold her for going up alone. He hugged her until her shoulders shook. "I am proud of you," he whispered. "The light kept ships safe tonight. <em>You</em> kept ships safe tonight."',
     stem: 'What is the BEST statement of the story\'s theme?',
     choices: ['Lighthouses are difficult to run.', 'Courage means acting despite fear, for something bigger than yourself.', 'Children should never climb stairs alone.', 'Fathers worry too much.'], answer: 'B' },
-  { id: 'e7-p2-02', type: 'mc', topic: 'Characterization', passage: 'SAME',
+  { id: 'e7-p2-02', type: 'mc', topic: 'Characterization', standard: 'NY-RL.7.3', passage: 'SAME',
     stem: 'The sentence "before fear could speak louder" suggests that Nora—',
     choices: ['is not afraid', 'is afraid but chooses to act anyway', 'is angry with her father', 'does not understand the situation'], answer: 'B' },
-  { id: 'e7-p2-03', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e7-p2-03', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.7.4', passage: 'SAME',
     stem: '"The great lens bloomed with yellow light" uses a—',
     choices: ['hyperbole', 'flower metaphor', 'historical reference', 'fact'], answer: 'B' },
-  { id: 'e7-p2-04', type: 'mc', topic: 'Mood', passage: 'SAME',
+  { id: 'e7-p2-04', type: 'mc', topic: 'Mood', standard: 'NY-RL.7.1', passage: 'SAME',
     stem: 'Which word BEST describes the mood at the END of the passage?',
     choices: ['tense', 'relieved and proud', 'angry', 'confused'], answer: 'B' },
 
   // --- Paired-text ---
-  { id: 'e7-p3-01', type: 'mc', topic: 'Compare Texts',
+  { id: 'e7-p3-01', type: 'mc', topic: 'Compare Texts', standard: 'NY-RL.7.1',
     passage: 'Compare "The Quiet Influence of Dolores Huerta" and "The Lighthouse Keeper\'s Daughter."',
     stem: 'Both Huerta and Nora demonstrate that—',
     choices: ['age determines ability', 'ordinary people can make a difference through action', 'fame is more important than impact', 'fear should stop us'], answer: 'B' },
 
   // --- Language/Grammar ---
-  { id: 'e7-lang-01', type: 'mc', topic: 'Verb Voice',
+  { id: 'e7-lang-01', type: 'mc', topic: 'Verb Voice', standard: 'NY-RL.7.1',
     stem: 'Which sentence is in the ACTIVE voice?',
     choices: ['The cake was baked by Amy.', 'Amy baked the cake.', 'The cake has been baked.', 'A cake is being baked.'], answer: 'B' },
-  { id: 'e7-lang-02', type: 'mc', topic: 'Dangling Modifier',
+  { id: 'e7-lang-02', type: 'mc', topic: 'Dangling Modifier', standard: 'NY-RL.7.1',
     stem: 'Which sentence is WRITTEN CORRECTLY?',
     choices: ['Walking down the street, the stars were bright.', 'Walking down the street, Jess saw the bright stars.', 'The stars were bright walking down the street.', 'Walking down the street were bright stars.'], answer: 'B' },
-  { id: 'e7-lang-03', type: 'mc', topic: 'Commas',
+  { id: 'e7-lang-03', type: 'mc', topic: 'Commas', standard: 'NY-RL.7.1',
     stem: 'Which sentence uses commas correctly?',
     choices: ['My brother, who is ten, plays soccer.', 'My brother who is ten, plays soccer.', 'My brother, who is ten plays soccer.', 'My brother who is ten plays soccer,'], answer: 'A' },
-  { id: 'e7-lang-04', type: 'mc', topic: 'Roots / Affixes',
+  { id: 'e7-lang-04', type: 'mc', topic: 'Roots / Affixes', standard: 'NY-RL.7.1',
     stem: 'The word <em>benevolent</em> contains <em>bene-</em> meaning "well" and <em>-vol</em> meaning "wish." What does <em>benevolent</em> mean?',
     choices: ['well-wishing; kind', 'loud-sounding', 'poorly made', 'extremely fast'], answer: 'A' },
-  { id: 'e7-lang-05', type: 'mc', topic: 'Context Clues',
+  { id: 'e7-lang-05', type: 'mc', topic: 'Context Clues', standard: 'NY-RL.7.4',
     stem: 'Read: "The detective\'s <em>astute</em> observation solved the case no one else could crack." <em>Astute</em> most nearly means—',
     choices: ['careless', 'sharp, insightful', 'loud', 'boring'], answer: 'B' },
-  { id: 'e7-lang-06', type: 'mc', topic: 'Tone',
+  { id: 'e7-lang-06', type: 'mc', topic: 'Tone', standard: 'NY-RL.7.1',
     stem: 'Which sentence has a FORMAL tone?',
     choices: ['Hey, the meeting was awesome!', 'The meeting was a total fail, bro.', 'The meeting was highly productive and well-organized.', 'Meeting = good.'], answer: 'C' },
-  { id: 'e7-lang-07', type: 'mc', topic: 'Semicolons',
+  { id: 'e7-lang-07', type: 'mc', topic: 'Semicolons', standard: 'NY-RL.7.1',
     stem: 'Which sentence uses the semicolon correctly?',
     choices: ['I read the book; it was short.', 'I read the book; but it was short.', 'I read; the book it was short.', 'I read the book, it was short;'], answer: 'A' },
-  { id: 'e7-fill-01', type: 'fill', topic: 'Writing Analysis',
+  { id: 'e7-fill-01', type: 'fill', topic: 'Writing Analysis', standard: 'NY-W.7.2',
     stem: 'In one sentence, explain how the title "The Quiet Influence of Dolores Huerta" relates to the passage\'s main idea.',
     unit: '', hint: 'Complete sentence.', answer: [] },
-  { id: 'e7-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e7-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.7.4',
     stem: 'The passage uses "rallying cry." Write a synonym for <em>rallying</em> that fits the context.',
     unit: '', hint: 'One word.', answer: ['unifying', 'inspiring', 'motivating', 'uniting', 'gathering'] },
 ],
@@ -1788,70 +1833,70 @@ const ELA_BANK = {
 // ====================== GRADE 8 ======================
 8: [
   // --- Passage 1: Informational ---
-  { id: 'e8-p1-01', type: 'mc', topic: 'Central Idea',
+  { id: 'e8-p1-01', type: 'mc', topic: 'Central Idea', standard: 'NY-RI.8.2',
     passage: '<strong>The Ink-Well War: Why Writing by Hand Still Matters</strong><br><br>A 2023 study at Norwegian University of Science and Technology asked university students to take notes using three methods: typing, handwriting, and drawing. EEG monitors recorded their brain activity. The results were striking. When students handwrote or drew, dozens of brain regions — those involved in memory, language, movement, and visual processing — lit up and communicated with each other. When they typed, only a narrow set of regions activated. The takeaway, according to lead researcher Audrey van der Meer, is not that typing is useless, but that writing by hand "creates much more activity in the sensorimotor parts of the brain" — activity that appears to help information stick.<br><br>Critics argue the research is preliminary and that the practical benefits of typing — speed, legibility, searchability — outweigh any memory advantage. Yet even the critics agree on one point: students who mix methods, taking some notes by hand and producing drafts on a keyboard, consistently outperform students who rely on only one. The future of learning may not be a war between pen and laptop, but a truce.',
     stem: 'Which BEST states the central idea of the passage?',
     choices: ['Typing is always inferior to handwriting.', 'Mixing handwriting and typing may offer the greatest learning benefit.', 'Keyboards cause memory loss.', 'Drawing is the only way to learn.'], answer: 'B' },
-  { id: 'e8-p1-02', type: 'mc', topic: 'Evaluating Evidence', passage: 'SAME',
+  { id: 'e8-p1-02', type: 'mc', topic: 'Evaluating Evidence', standard: 'NY-RL.8.1', passage: 'SAME',
     stem: 'Which piece of evidence MOST strengthens the claim about the power of handwriting?',
     choices: ['The mention of "speed, legibility, searchability"', 'The EEG results showing more brain regions activating during handwriting', 'The title of the passage', 'The age of the university'], answer: 'B' },
   { id: 'e8-p1-03', type: 'mc', topic: 'Author\'s Reasoning', passage: 'SAME',
     stem: 'Why does the author include the perspective of critics?',
     choices: ['To dismiss the study entirely', 'To show that handwriting is useless', 'To acknowledge a counterargument and build credibility', 'Because the author disagrees with the study'], answer: 'C' },
-  { id: 'e8-p1-04', type: 'mc', topic: 'Vocabulary', passage: 'SAME',
+  { id: 'e8-p1-04', type: 'mc', topic: 'Vocabulary', standard: 'NY-RL.8.4', passage: 'SAME',
     stem: 'As used in the passage, <em>preliminary</em> most nearly means—',
     choices: ['early; not yet complete', 'final', 'humorous', 'translated'], answer: 'A' },
-  { id: 'e8-p1-05', type: 'mc', topic: 'Structure / Purpose', passage: 'SAME',
+  { id: 'e8-p1-05', type: 'mc', topic: 'Structure / Purpose', standard: 'NY-RL.8.1', passage: 'SAME',
     stem: 'The final sentence ("not a war between pen and laptop, but a truce") functions to—',
     choices: ['deliver the author\'s call to balance the two approaches', 'contradict the study', 'introduce a new topic', 'list facts'], answer: 'A' },
 
   // --- Passage 2: Literary ---
-  { id: 'e8-p2-01', type: 'mc', topic: 'Theme',
+  { id: 'e8-p2-01', type: 'mc', topic: 'Theme', standard: 'NY-RL.8.2',
     passage: '<strong>The Borrowed Coat</strong><br><br>The coat had belonged to Micah\'s grandfather, a man he had only known through stories. It hung in the back closet — heavy gray wool, a loose button, and the smell of cedar and something faintly like pipe smoke, though Grandpa had not smoked in thirty years. Micah was fifteen the winter he finally pulled it on.<br><br>It fit — almost. The shoulders slumped. The sleeves swallowed his hands. He walked to school in it, feeling ridiculous and warm in equal measure.<br><br>In the hallway, a senior named Devon stopped dead. "Hey. That your grandfather\'s coat?" Devon had known Grandpa, once. Micah nodded, suddenly shy.<br><br>"He wore it to every one of my basketball games," Devon said quietly. "He sat in the top row, always clapping with two fingers. Like this." He showed Micah — two fingers tapping the opposite palm, a quiet applause.<br><br>Micah walked the rest of the way with his shoulders a little straighter. The coat did not fit him. But it was growing with him, in a way he did not yet have the words for.',
     stem: 'Which BEST states the theme of the story?',
     choices: ['Coats are important.', 'Inherited objects can carry relationships and identity across generations.', 'You should always wear warm clothes.', 'Teenagers should dress like adults.'], answer: 'B' },
-  { id: 'e8-p2-02', type: 'mc', topic: 'Symbolism', passage: 'SAME',
+  { id: 'e8-p2-02', type: 'mc', topic: 'Symbolism', standard: 'NY-RL.8.1', passage: 'SAME',
     stem: 'What does the coat MOST LIKELY symbolize?',
     choices: ['The weight of winter', 'The legacy of Micah\'s grandfather', 'School uniforms', 'Cold weather clothing trends'], answer: 'B' },
-  { id: 'e8-p2-03', type: 'mc', topic: 'Character', passage: 'SAME',
+  { id: 'e8-p2-03', type: 'mc', topic: 'Character', standard: 'NY-RL.8.3', passage: 'SAME',
     stem: 'How does Micah change over the course of the passage?',
     choices: ['He feels self-conscious, then connected to his grandfather.', 'He is happy, then sad.', 'He becomes angry with Devon.', 'He forgets his grandfather.'], answer: 'A' },
-  { id: 'e8-p2-04', type: 'mc', topic: 'Figurative Language', passage: 'SAME',
+  { id: 'e8-p2-04', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.8.4', passage: 'SAME',
     stem: '"The sleeves swallowed his hands" is an example of—',
     choices: ['onomatopoeia', 'personification', 'hyperbole', 'historical allusion'], answer: 'B' },
 
   // --- Paired-text ---
-  { id: 'e8-p3-01', type: 'mc', topic: 'Cross-Text Analysis',
+  { id: 'e8-p3-01', type: 'mc', topic: 'Cross-Text Analysis', standard: 'NY-RL.8.1',
     passage: 'Think about both "The Ink-Well War" and "The Borrowed Coat."',
     stem: 'Both passages explore the idea that—',
     choices: ['old things should be discarded', 'physical, tangible experiences leave a lasting impression', 'technology is always best', 'memory is unreliable'], answer: 'B' },
 
   // --- Language/Grammar ---
-  { id: 'e8-lang-01', type: 'mc', topic: 'Verbals',
+  { id: 'e8-lang-01', type: 'mc', topic: 'Verbals', standard: 'NY-RL.8.1',
     stem: 'In "Running is good exercise," the word <em>Running</em> is—',
     choices: ['a verb', 'a gerund (used as a noun)', 'an adjective', 'a preposition'], answer: 'B' },
-  { id: 'e8-lang-02', type: 'mc', topic: 'Parallel Structure',
+  { id: 'e8-lang-02', type: 'mc', topic: 'Parallel Structure', standard: 'NY-RL.8.1',
     stem: 'Which sentence uses parallel structure correctly?',
     choices: ['She likes hiking, swimming, and to bike.', 'She likes to hike, swimming, and biking.', 'She likes hiking, swimming, and biking.', 'She likes hike, swim, and biking.'], answer: 'C' },
-  { id: 'e8-lang-03', type: 'mc', topic: 'Active/Passive Voice',
+  { id: 'e8-lang-03', type: 'mc', topic: 'Active/Passive Voice', standard: 'NY-RL.8.1',
     stem: 'Rewrite "The report was written by the committee" in the ACTIVE voice.',
     choices: ['The committee wrote the report.', 'The report wrote the committee.', 'Written by the committee was the report.', 'The committee has been writing the report.'], answer: 'A' },
-  { id: 'e8-lang-04', type: 'mc', topic: 'Punctuation',
+  { id: 'e8-lang-04', type: 'mc', topic: 'Punctuation', standard: 'NY-L.8.2',
     stem: 'Which sentence uses a dash correctly?',
     choices: ['She grabbed three things — her phone, her keys, and a jacket — and ran.', 'She grabbed three things—her phone, her keys—and a jacket—and ran.', 'She grabbed — three things her phone, her keys, and a jacket and ran.', 'She grabbed three things her phone, her keys—and a jacket and—ran.'], answer: 'A' },
-  { id: 'e8-lang-05', type: 'mc', topic: 'Context Clues',
+  { id: 'e8-lang-05', type: 'mc', topic: 'Context Clues', standard: 'NY-RL.8.4',
     stem: 'Read: "The politician\'s speech was full of <em>platitudes</em> — predictable phrases everyone had heard a thousand times." <em>Platitudes</em> means—',
     choices: ['fresh ideas', 'overused, unoriginal statements', 'foreign languages', 'long pauses'], answer: 'B' },
-  { id: 'e8-lang-06', type: 'mc', topic: 'Figurative Language',
+  { id: 'e8-lang-06', type: 'mc', topic: 'Figurative Language', standard: 'NY-RL.8.4',
     stem: 'Which quote contains an ALLUSION (a reference to a well-known story, event, or figure)?',
     choices: ['The task was her Achilles\' heel.', 'The rain fell softly.', 'She ran to the bus.', 'He is six feet tall.'], answer: 'A' },
-  { id: 'e8-lang-07', type: 'mc', topic: 'Rhetoric',
+  { id: 'e8-lang-07', type: 'mc', topic: 'Rhetoric', standard: 'NY-RL.8.1',
     stem: 'Which sentence appeals PRIMARILY to emotion?',
     choices: ['The study included 320 participants.', 'Imagine your own child losing a home.', 'Rent prices rose 4.2%.', 'The report was published in 2023.'], answer: 'B' },
-  { id: 'e8-fill-01', type: 'fill', topic: 'Argumentative Writing',
+  { id: 'e8-fill-01', type: 'fill', topic: 'Argumentative Writing', standard: 'NY-RI.8.8',
     stem: 'Write ONE claim sentence in response to "The Ink-Well War." Your claim should take a clear position on handwriting vs. typing.',
     unit: '', hint: 'Make your stance clear.', answer: [] },
-  { id: 'e8-fill-02', type: 'fill', topic: 'Vocabulary',
+  { id: 'e8-fill-02', type: 'fill', topic: 'Vocabulary', standard: 'NY-RL.8.4',
     stem: 'The passage uses <em>truce</em>. Give a one-word synonym that fits the context.',
     unit: '', hint: 'One word.', answer: ['peace', 'agreement', 'ceasefire', 'compromise', 'armistice'] },
 ],
@@ -1871,59 +1916,59 @@ const SCIENCE_BANK = {
 // ====================== GRADE 5 (Elementary) ======================
 5: [
   // ---- Physical Science (matter, forces, energy) ----
-  { id: 's5-01', type: 'mc', topic: 'Matter - States',
+  { id: 's5-01', type: 'mc', topic: 'Matter - States', standard: 'NYSSLS-5-PS1-1',
     stem: 'A puddle of water slowly disappears on a sunny day. What MOST LIKELY happened to the water?',
     choices: ['It turned into soil.', 'It evaporated into water vapor.', 'It became heavier.', 'It was destroyed.'], answer: 'B' },
-  { id: 's5-02', type: 'mc', topic: 'Conservation of Matter',
+  { id: 's5-02', type: 'mc', topic: 'Conservation of Matter', standard: 'NYSSLS-5-PS1-1',
     stem: 'Amy weighs a block of ice. She lets it melt in a sealed cup and weighs it again. What will the scale show?',
     choices: ['The water weighs less than the ice.', 'The water weighs more than the ice.', 'The water weighs the same as the ice.', 'The water weighs zero.'], answer: 'C' },
-  { id: 's5-03', type: 'mc', topic: 'Mixtures',
+  { id: 's5-03', type: 'mc', topic: 'Mixtures', standard: 'NYSSLS-5-PS1-1',
     stem: 'Which pair is BEST described as a mixture?',
     choices: ['Salt fully dissolved in water', 'Sand and gravel in a bucket', 'Pure water', 'A piece of copper'], answer: 'B' },
-  { id: 's5-04', type: 'mc', topic: 'Forces - Gravity',
+  { id: 's5-04', type: 'mc', topic: 'Forces - Gravity', standard: 'NYSSLS-5-PS2-1',
     stem: 'A ball is released from the top of a ramp. Which force PULLS the ball downward?',
     choices: ['friction', 'magnetism', 'gravity', 'light'], answer: 'C' },
-  { id: 's5-05', type: 'mc', topic: 'Energy Transfer',
+  { id: 's5-05', type: 'mc', topic: 'Energy Transfer', standard: 'NYSSLS-5-PS3-1',
     stem: 'A boy pushes a toy car across a carpet. The car slows down and stops. Which force causes the car to slow?',
     choices: ['gravity', 'friction with the carpet', 'magnetism', 'air pressure'], answer: 'B' },
-  { id: 's5-06', type: 'mc', topic: 'Energy - Plants',
+  { id: 's5-06', type: 'mc', topic: 'Energy - Plants', standard: 'NYSSLS-5-PS3-1',
     stem: 'Where do plants get the energy they use to grow?',
     choices: ['from the soil', 'from sunlight', 'from the wind', 'from water only'], answer: 'B' },
 
   // ---- Life Science ----
-  { id: 's5-07', type: 'mc', topic: 'Food Webs',
+  { id: 's5-07', type: 'mc', topic: 'Food Webs', standard: 'NYSSLS-5-LS2-1',
     stem: 'In a pond, algae are eaten by tiny fish, which are eaten by larger fish. If the algae die, what is the MOST LIKELY effect?',
     choices: ['Larger fish will have more food.', 'Tiny fish will eat the larger fish.', 'Tiny fish and larger fish will both have less food.', 'Nothing will change.'], answer: 'C' },
-  { id: 's5-08', type: 'mc', topic: 'Food Webs - Producers',
+  { id: 's5-08', type: 'mc', topic: 'Food Webs - Producers', standard: 'NYSSLS-5-LS2-1',
     stem: 'Which organism is a PRODUCER in a typical food web?',
     choices: ['rabbit', 'fox', 'grass', 'mushroom'], answer: 'C' },
-  { id: 's5-09', type: 'mc', topic: 'Matter Cycling',
+  { id: 's5-09', type: 'mc', topic: 'Matter Cycling', standard: 'NYSSLS-5-PS1-1',
     stem: 'When a leaf falls from a tree and rots on the forest floor, what MOSTLY happens to the matter in the leaf?',
     choices: ['It disappears.', 'It is recycled into the soil for other organisms.', 'It turns into rock.', 'It is destroyed forever.'], answer: 'B' },
-  { id: 's5-10', type: 'mc', topic: 'Plant Needs',
+  { id: 's5-10', type: 'mc', topic: 'Plant Needs', standard: 'NYSSLS-5-PS1-1',
     stem: 'A scientist grows two bean plants. One gets sunlight; one is placed in a dark closet. Both get water. Why would the plant in the closet die?',
     choices: ['It doesn\'t have soil.', 'It can\'t do photosynthesis without light.', 'It gets too much water.', 'It doesn\'t have friends.'], answer: 'B' },
-  { id: 's5-11', type: 'mc', topic: 'Ecosystems',
+  { id: 's5-11', type: 'mc', topic: 'Ecosystems', standard: 'NYSSLS-5-LS2-1',
     stem: 'Which BEST explains why there are usually more plants than animals in an ecosystem?',
     choices: ['Plants are smaller.', 'Energy is lost at each level of the food chain, so fewer animals can be supported.', 'Plants reproduce faster.', 'Animals eat each other.'], answer: 'B' },
 
   // ---- Earth and Space Science ----
-  { id: 's5-12', type: 'mc', topic: 'Solar System',
+  { id: 's5-12', type: 'mc', topic: 'Solar System', standard: 'NYSSLS-5-ESS1-1',
     stem: 'Which statement about the Sun is true?',
     choices: ['The Sun orbits Earth.', 'The Sun is a star at the center of our solar system.', 'The Sun is a planet.', 'The Sun gives off no light.'], answer: 'B' },
-  { id: 's5-13', type: 'mc', topic: 'Day and Night',
+  { id: 's5-13', type: 'mc', topic: 'Day and Night', standard: 'NYSSLS-5-PS1-1',
     stem: 'Why do we have day and night on Earth?',
     choices: ['Earth rotates on its axis once every 24 hours.', 'The Sun turns off at night.', 'The Moon blocks the Sun.', 'Clouds cover the Sun.'], answer: 'A' },
-  { id: 's5-14', type: 'mc', topic: 'Shadows',
+  { id: 's5-14', type: 'mc', topic: 'Shadows', standard: 'NYSSLS-5-PS1-1',
     stem: 'Dan watches the shadow of a flagpole during the day. How will the shadow MOST LIKELY change between morning and noon?',
     choices: ['It will stay the exact same length.', 'It will get shorter as the Sun moves higher in the sky.', 'It will get longer.', 'It will disappear completely.'], answer: 'B' },
-  { id: 's5-15', type: 'mc', topic: 'Water Cycle',
+  { id: 's5-15', type: 'mc', topic: 'Water Cycle', standard: 'NYSSLS-5-ESS2-1',
     stem: 'Which process in the water cycle involves water rising from oceans and lakes into the air?',
     choices: ['condensation', 'precipitation', 'evaporation', 'runoff'], answer: 'C' },
-  { id: 's5-16', type: 'mc', topic: 'Earth Materials',
+  { id: 's5-16', type: 'mc', topic: 'Earth Materials', standard: 'NYSSLS-5-PS1-1',
     stem: 'Which of these is a renewable resource?',
     choices: ['coal', 'oil', 'wind', 'natural gas'], answer: 'C' },
-  { id: 's5-17', type: 'mc', topic: 'Weathering / Erosion',
+  { id: 's5-17', type: 'mc', topic: 'Weathering / Erosion', standard: 'NYSSLS-5-PS1-1',
     stem: 'Over thousands of years, a river cuts a deep canyon through rock. What process is MOSTLY responsible?',
     choices: ['volcanic eruption', 'erosion by flowing water', 'earthquakes', 'photosynthesis'], answer: 'B' },
   { id: 's5-18', type: 'mc', topic: 'Earth\'s Spheres',
@@ -1931,27 +1976,27 @@ const SCIENCE_BANK = {
     choices: ['hydrosphere and geosphere', 'atmosphere and biosphere', 'geosphere only', 'biosphere only'], answer: 'B' },
 
   // ---- Science & Engineering Practices ----
-  { id: 's5-19', type: 'mc', topic: 'Investigation Design',
+  { id: 's5-19', type: 'mc', topic: 'Investigation Design', standard: 'NYSSLS-5-PS1-1',
     stem: 'Maya wants to test how the amount of water affects how tall bean plants grow. Which variable should she CHANGE?',
     choices: ['type of soil', 'amount of water', 'amount of sunlight', 'type of plant'], answer: 'B' },
-  { id: 's5-20', type: 'mc', topic: 'Analyzing Data',
+  { id: 's5-20', type: 'mc', topic: 'Analyzing Data', standard: 'NYSSLS-5-PS1-1',
     stem: 'Maya\'s plants get 10 mL, 30 mL, and 50 mL of water per day. The 10 mL plant grew 4 cm, the 30 mL plant grew 11 cm, the 50 mL plant grew 3 cm. What is the BEST conclusion?',
     choices: ['More water is always better.', 'Plants don\'t need water.', 'There is an amount of water that is best — too little or too much can hurt growth.', 'Plants need only sunlight.'], answer: 'C' },
-  { id: 's5-21', type: 'mc', topic: 'Models',
+  { id: 's5-21', type: 'mc', topic: 'Models', standard: 'NYSSLS-5-PS1-1',
     stem: 'Why do scientists use a model of the solar system instead of the real thing?',
     choices: ['The real solar system is too small to see.', 'Models make very large or very small systems easier to study and explain.', 'Models are always more accurate.', 'There is no real solar system.'], answer: 'B' },
 
   // ---- Fill-ins ----
-  { id: 's5-fill-01', type: 'fill', topic: 'Water Cycle',
+  { id: 's5-fill-01', type: 'fill', topic: 'Water Cycle', standard: 'NYSSLS-5-ESS2-1',
     stem: 'The process by which water vapor cools and forms clouds is called _______.',
     unit: '', hint: 'One word.', answer: ['condensation'] },
-  { id: 's5-fill-02', type: 'fill', topic: 'Forces',
+  { id: 's5-fill-02', type: 'fill', topic: 'Forces', standard: 'NYSSLS-5-PS2-1',
     stem: 'A force that opposes motion between two surfaces that are rubbing together is called _______.',
     unit: '', hint: 'One word.', answer: ['friction'] },
-  { id: 's5-fill-03', type: 'fill', topic: 'Ecosystems',
+  { id: 's5-fill-03', type: 'fill', topic: 'Ecosystems', standard: 'NYSSLS-5-LS2-1',
     stem: 'Organisms that make their own food using sunlight are called _______.',
     unit: '', hint: 'One word.', answer: ['producers', 'autotrophs'] },
-  { id: 's5-fill-04', type: 'fill', topic: 'Earth',
+  { id: 's5-fill-04', type: 'fill', topic: 'Earth', standard: 'NYSSLS-5-ESS2-1',
     stem: 'A complete rotation of Earth on its axis takes about ___ hours.',
     unit: 'hours', hint: 'Whole number.', answer: ['24'] },
 ],
@@ -1959,16 +2004,16 @@ const SCIENCE_BANK = {
 // ====================== GRADE 8 (Intermediate) ======================
 8: [
   // ---- Physical Science ----
-  { id: 's8-01', type: 'mc', topic: 'Atomic Structure',
+  { id: 's8-01', type: 'mc', topic: 'Atomic Structure', standard: 'NYSSLS-MS-PS1-1',
     stem: 'Which subatomic particle has a NEGATIVE charge?',
     choices: ['proton', 'neutron', 'electron', 'nucleus'], answer: 'C' },
-  { id: 's8-02', type: 'mc', topic: 'Chemical Reactions',
+  { id: 's8-02', type: 'mc', topic: 'Chemical Reactions', standard: 'NYSSLS-MS-PS1-2',
     stem: 'In a chemical reaction, matter is conserved. This means that—',
     choices: ['atoms are destroyed during the reaction', 'the number and type of atoms are the same before and after', 'new elements are created', 'mass always decreases'], answer: 'B' },
-  { id: 's8-03', type: 'mc', topic: 'States of Matter / Energy',
+  { id: 's8-03', type: 'mc', topic: 'States of Matter / Energy', standard: 'NYSSLS-MS-PS3-1',
     stem: 'A block of ice sits in a warm room and melts. What is happening at the particle level?',
     choices: ['Particles stop moving.', 'Particles lose energy and slow down.', 'Particles gain energy and begin to move freely past one another.', 'Particles split into atoms.'], answer: 'C' },
-  { id: 's8-04', type: 'mc', topic: 'Density',
+  { id: 's8-04', type: 'mc', topic: 'Density', standard: 'NYSSLS-MS-PS1-1',
     stem: 'An object has a mass of 60 g and a volume of 20 cm³. What is its density, in g/cm³?',
     choices: ['1', '2', '3', '40'], answer: 'C' },
   { id: 's8-05', type: 'mc', topic: 'Newton\'s Laws',
@@ -1977,53 +2022,53 @@ const SCIENCE_BANK = {
   { id: 's8-06', type: 'mc', topic: 'Newton\'s Laws',
     stem: 'You push a shopping cart with a certain force. If you add more groceries (more mass), what happens to its acceleration for the SAME force?',
     choices: ['acceleration stays the same', 'acceleration decreases', 'acceleration increases', 'acceleration becomes zero'], answer: 'B' },
-  { id: 's8-07', type: 'mc', topic: 'Energy - Kinetic/Potential',
+  { id: 's8-07', type: 'mc', topic: 'Energy - Kinetic/Potential', standard: 'NYSSLS-MS-PS3-1',
     stem: 'A ball is at the top of a hill. As it rolls down, which statement BEST describes its energy?',
     choices: ['Kinetic energy increases; gravitational potential energy decreases.', 'Potential energy increases; kinetic energy decreases.', 'Both energies disappear.', 'Total energy triples.'], answer: 'A' },
-  { id: 's8-08', type: 'mc', topic: 'Waves',
+  { id: 's8-08', type: 'mc', topic: 'Waves', standard: 'NYSSLS-MS-PS4-1',
     stem: 'Increasing the FREQUENCY of a sound wave affects what we hear as—',
     choices: ['louder sound', 'higher pitch', 'faster speed', 'more echo'], answer: 'B' },
-  { id: 's8-09', type: 'mc', topic: 'Electromagnetism',
+  { id: 's8-09', type: 'mc', topic: 'Electromagnetism', standard: 'NYSSLS-MS-PS1-1',
     stem: 'You wrap a wire around an iron nail and connect it to a battery. What does the nail become?',
     choices: ['a capacitor', 'an electromagnet', 'a resistor', 'a permanent magnet'], answer: 'B' },
-  { id: 's8-10', type: 'mc', topic: 'Thermal Energy',
+  { id: 's8-10', type: 'mc', topic: 'Thermal Energy', standard: 'NYSSLS-MS-PS3-1',
     stem: 'Heat flows naturally from—',
     choices: ['cold objects to hot objects', 'hot objects to cold objects', 'equal-temperature objects to each other', 'only solids to liquids'], answer: 'B' },
 
   // ---- Life Science ----
-  { id: 's8-11', type: 'mc', topic: 'Cells',
+  { id: 's8-11', type: 'mc', topic: 'Cells', standard: 'NYSSLS-MS-LS1-1',
     stem: 'Which organelle is responsible for making most of a cell\'s energy (ATP)?',
     choices: ['nucleus', 'ribosome', 'mitochondrion', 'cell wall'], answer: 'C' },
-  { id: 's8-12', type: 'mc', topic: 'Photosynthesis',
+  { id: 's8-12', type: 'mc', topic: 'Photosynthesis', standard: 'NYSSLS-MS-PS1-1',
     stem: 'Photosynthesis converts carbon dioxide and water into—',
     choices: ['oxygen and glucose', 'nitrogen and salt', 'oxygen and methane', 'carbon and protein'], answer: 'A' },
-  { id: 's8-13', type: 'mc', topic: 'Genetics',
+  { id: 's8-13', type: 'mc', topic: 'Genetics', standard: 'NYSSLS-MS-LS3-1',
     stem: 'A trait is passed from parents to offspring through—',
     choices: ['genes on chromosomes', 'the parent\'s behavior', 'food choices', 'the environment only'], answer: 'A' },
-  { id: 's8-14', type: 'mc', topic: 'Natural Selection',
+  { id: 's8-14', type: 'mc', topic: 'Natural Selection', standard: 'NYSSLS-MS-LS4-4',
     stem: 'A beetle population lives on a tree with dark bark. Most of the beetles are dark, but some are light-colored. Birds eat the light ones more easily. Over many generations, the beetle population will MOST LIKELY—',
     choices: ['become lighter in color', 'stay exactly the same', 'become even darker in color', 'all fly away'], answer: 'C' },
-  { id: 's8-15', type: 'mc', topic: 'Ecosystems - Energy',
+  { id: 's8-15', type: 'mc', topic: 'Ecosystems - Energy', standard: 'NYSSLS-MS-PS3-1',
     stem: 'A bar graph shows energy available at each level of a food chain. Why is there LESS energy at each higher level?',
     choices: ['Higher organisms are lazier.', 'Much of the energy is used for life processes or lost as heat at each level.', 'Sunlight decreases at higher levels.', 'Higher organisms eat soil.'], answer: 'B' },
-  { id: 's8-16', type: 'mc', topic: 'Body Systems',
+  { id: 's8-16', type: 'mc', topic: 'Body Systems', standard: 'NYSSLS-MS-PS1-1',
     stem: 'The circulatory system\'s MAIN job is to—',
     choices: ['digest food', 'transport nutrients, oxygen, and wastes throughout the body', 'send nerve signals', 'make bones'], answer: 'B' },
-  { id: 's8-17', type: 'mc', topic: 'Evidence of Evolution',
+  { id: 's8-17', type: 'mc', topic: 'Evidence of Evolution', standard: 'NYSSLS-MS-LS4-1',
     stem: 'The similar bone structures in a human arm, a whale flipper, and a bat wing are examples of—',
     choices: ['convergent evolution', 'homologous structures that suggest common ancestry', 'coincidence', 'design for the same task'], answer: 'B' },
 
   // ---- Earth and Space Science ----
-  { id: 's8-18', type: 'mc', topic: 'Plate Tectonics',
+  { id: 's8-18', type: 'mc', topic: 'Plate Tectonics', standard: 'NYSSLS-MS-ESS2-3',
     stem: 'Most earthquakes occur at—',
     choices: ['the center of continents', 'the boundaries between tectonic plates', 'inside the ocean only', 'the poles'], answer: 'B' },
-  { id: 's8-19', type: 'mc', topic: 'Climate vs Weather',
+  { id: 's8-19', type: 'mc', topic: 'Climate vs Weather', standard: 'NYSSLS-MS-ESS2-5',
     stem: 'Which is the BEST description of CLIMATE?',
     choices: ['Today\'s temperature', 'The weather on one day', 'Average weather conditions over many years', 'A type of storm'], answer: 'C' },
-  { id: 's8-20', type: 'mc', topic: 'Human Impact',
+  { id: 's8-20', type: 'mc', topic: 'Human Impact', standard: 'NYSSLS-MS-ESS3-3',
     stem: 'Burning fossil fuels releases large amounts of carbon dioxide. This MOSTLY contributes to—',
     choices: ['less sunlight reaching Earth', 'the greenhouse effect and global warming', 'increased ocean currents only', 'more oxygen in the atmosphere'], answer: 'B' },
-  { id: 's8-21', type: 'mc', topic: 'Rock Cycle',
+  { id: 's8-21', type: 'mc', topic: 'Rock Cycle', standard: 'NYSSLS-MS-ESS2-1',
     stem: 'Sedimentary rock is MOST LIKELY to form when—',
     choices: ['magma cools deep inside Earth', 'rock melts and refreezes', 'layers of sediment are compressed over time', 'an earthquake shakes the ground'], answer: 'C' },
   { id: 's8-22', type: 'mc', topic: 'Earth\'s History',
@@ -2031,24 +2076,24 @@ const SCIENCE_BANK = {
     choices: ['show the exact weather on a given day long ago', 'provide evidence of life and environments in the past', 'are always complete skeletons', 'can be made in a laboratory'], answer: 'B' },
 
   // ---- Science & Engineering Practices ----
-  { id: 's8-23', type: 'mc', topic: 'Experimental Design',
+  { id: 's8-23', type: 'mc', topic: 'Experimental Design', standard: 'NYSSLS-MS-PS1-1',
     stem: 'In an experiment, a CONTROL GROUP is used to—',
     choices: ['change several variables at once', 'provide a baseline to compare against the experimental group', 'eliminate all the variables', 'replace data collection'], answer: 'B' },
-  { id: 's8-24', type: 'mc', topic: 'Evaluating Claims',
+  { id: 's8-24', type: 'mc', topic: 'Evaluating Claims', standard: 'NYSSLS-MS-PS1-1',
     stem: 'A scientist claims a new vitamin cures colds. Which evidence BEST supports the claim?',
     choices: ['Three friends say they felt better.', 'The vitamin comes in nice packaging.', 'A blinded study of 500 people shows significantly shorter colds compared to a placebo.', 'The inventor speaks confidently.'], answer: 'C' },
 
   // ---- Fill-ins ----
-  { id: 's8-fill-01', type: 'fill', topic: 'Density',
+  { id: 's8-fill-01', type: 'fill', topic: 'Density', standard: 'NYSSLS-MS-PS1-1',
     stem: 'An object has mass 48 g and volume 12 cm³. What is its density? (g/cm³)',
     unit: 'g/cm³', hint: 'Whole number.', answer: ['4'] },
-  { id: 's8-fill-02', type: 'fill', topic: 'Cells',
+  { id: 's8-fill-02', type: 'fill', topic: 'Cells', standard: 'NYSSLS-MS-LS1-1',
     stem: 'The organelle that controls the cell and contains DNA is the _______.',
     unit: '', hint: 'One word.', answer: ['nucleus'] },
-  { id: 's8-fill-03', type: 'fill', topic: 'Photosynthesis',
+  { id: 's8-fill-03', type: 'fill', topic: 'Photosynthesis', standard: 'NYSSLS-MS-PS1-1',
     stem: 'Photosynthesis takes in carbon dioxide and releases _______ gas.',
     unit: '', hint: 'One word.', answer: ['oxygen', 'O2'] },
-  { id: 's8-fill-04', type: 'fill', topic: 'Waves',
+  { id: 's8-fill-04', type: 'fill', topic: 'Waves', standard: 'NYSSLS-MS-PS4-1',
     stem: 'Sound waves travel fastest through which state of matter: solid, liquid, or gas?',
     unit: '', hint: 'One word.', answer: ['solid'] },
 ],
@@ -2106,14 +2151,25 @@ const STATE = {
   name: '',
   apiKey: '',
   accessCode: '',
+  progressCode: '',    // student's memorable code (e.g., "DORA-4K7") — used to restore progress across devices
   model: 'google/gemini-2.5-flash',
   ttsModel: 'openai/gpt-4o-mini-tts',
   ttsVoice: 'nova',
   streak: 0,
   xp: 0,
-  history: [],       // list of past attempt summaries
-  active: null,      // current quiz: { subject, grade, count, qids, idx, answers, canvases }
+  history: [],         // list of past attempt summaries
+  active: null,        // current quiz: { subject, grade, count, qids, idx, answers, canvases }
   tutor: { qid: null, subject: null, grade: null, history: [], topicMode: false, topic: null },
+  // --- v3 additions ---
+  seenIds: {},         // { 'm3-01': 1713562341000, ... } — every qid the student has answered (right or wrong). Picker avoids these until pool exhausted.
+  answerLog: {},       // { 'm3-01': { correct: true, standard: 'NY-3.OA.3', attempts: 2, lastAt: ... } } — per-question history for weak-standard detection.
+  customQuestions: {   // dynamically added questions — shape mirrors SUBJECTS.{subject}.bank (by grade number)
+    math: {}, ela: {}, science: {},
+  },
+  topUpState: {        // tracks which (subject,grade,standard) buckets have already been topped-up recently (debounce to avoid spamming API)
+    lastTriggered: {}, // { 'math:5:NY-5.NF.2': 1713562341000 }
+    generated: 0,      // lifetime counter of AI-generated questions
+  },
 };
 
 function save() {
@@ -2132,10 +2188,112 @@ function load() {
     if (!STATE.tutor) STATE.tutor = { qid: null, subject: null, grade: null, history: [], topicMode: false, topic: null };
     // One-time upgrade: bump anyone still on the old robotic TTS to the new default.
     if (STATE.ttsModel === 'openai/tts-1') STATE.ttsModel = 'openai/gpt-4o-mini-tts';
+    // v3 migrations
+    if (!STATE.seenIds) STATE.seenIds = {};
+    if (!STATE.answerLog) STATE.answerLog = {};
+    if (!STATE.customQuestions) STATE.customQuestions = { math: {}, ela: {}, science: {} };
+    ['math','ela','science'].forEach(k => { if (!STATE.customQuestions[k]) STATE.customQuestions[k] = {}; });
+    if (!STATE.topUpState) STATE.topUpState = { lastTriggered: {}, generated: 0 };
+    if (STATE.progressCode === undefined) STATE.progressCode = '';
     return true;
   } catch(e) { return false; }
 }
 load();
+
+// ============================================================
+// PROGRESS CODE — simple backup/restore identifier for students
+// ============================================================
+// Student picks a memorable word like "DORA"; app appends 4 random chars -> "DORA-7J2K".
+// The code is the localStorage KEY suffix for a bundle that holds their history, seenIds,
+// answerLog, customQuestions, streak, xp, and name. Student types the code into a new
+// device -> bundle restored, progress follows them.
+
+const CLOUD_SYNC_URL = '';        // future: Firebase/Cloudflare Worker endpoint. Empty = local-only.
+
+function randomCodeSuffix() {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no confusing 0/O/1/I/L
+  let s = '';
+  for (let i = 0; i < 4; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+function makeProgressCode(word) {
+  const clean = (word || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 8);
+  if (clean.length < 3) return '';
+  return clean + '-' + randomCodeSuffix();
+}
+function progressBundleFromState() {
+  return {
+    v: 1,
+    name: STATE.name || '',
+    grade: STATE.grade || null,
+    streak: STATE.streak || 0,
+    xp: STATE.xp || 0,
+    history: STATE.history || [],
+    seenIds: STATE.seenIds || {},
+    answerLog: STATE.answerLog || {},
+    customQuestions: STATE.customQuestions || { math: {}, ela: {}, science: {} },
+    topUpState: STATE.topUpState || { lastTriggered: {}, generated: 0 },
+    progressCode: STATE.progressCode || '',
+    savedAt: Date.now(),
+  };
+}
+function applyProgressBundle(b) {
+  if (!b || typeof b !== 'object') return false;
+  if (b.name) STATE.name = b.name;
+  if (b.grade) STATE.grade = b.grade;
+  STATE.streak = b.streak || 0;
+  STATE.xp = b.xp || 0;
+  STATE.history = Array.isArray(b.history) ? b.history : [];
+  STATE.seenIds = b.seenIds || {};
+  STATE.answerLog = b.answerLog || {};
+  STATE.customQuestions = b.customQuestions || { math: {}, ela: {}, science: {} };
+  ['math','ela','science'].forEach(k => { if (!STATE.customQuestions[k]) STATE.customQuestions[k] = {}; });
+  STATE.topUpState = b.topUpState || { lastTriggered: {}, generated: 0 };
+  if (b.progressCode) STATE.progressCode = b.progressCode;
+  save();
+  return true;
+}
+function localBundleKey(code) { return 'hallpass:bundle:' + (code || '').toUpperCase(); }
+function saveBundleLocal(code) {
+  if (!code) return;
+  try { localStorage.setItem(localBundleKey(code), JSON.stringify(progressBundleFromState())); } catch(e) {}
+}
+function loadBundleLocal(code) {
+  if (!code) return null;
+  try {
+    const raw = localStorage.getItem(localBundleKey(code));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+async function cloudSyncPush() {
+  if (!CLOUD_SYNC_URL || !STATE.progressCode) return;
+  try {
+    await fetch(CLOUD_SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: STATE.progressCode, bundle: progressBundleFromState() }),
+    });
+  } catch(e) { /* offline — local bundle still saved */ }
+}
+async function cloudSyncPull(code) {
+  if (!CLOUD_SYNC_URL || !code) return null;
+  try {
+    const r = await fetch(CLOUD_SYNC_URL + '?code=' + encodeURIComponent(code));
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// Auto-sync wrapper — replaces bare save() calls on progress-changing actions.
+// We keep save() simple; call saveWithSync() from any action worth syncing.
+function saveWithSync() {
+  save();
+  if (STATE.progressCode) {
+    saveBundleLocal(STATE.progressCode);
+    cloudSyncPush(); // fire-and-forget
+  }
+}
 
 // ============================================================
 // ACCESS LOCK — WebCrypto unlock/encrypt for the shared API key
@@ -2252,6 +2410,8 @@ function showScreen(id) {
 if (STATE.name) {
   renderHome();
   showScreen('home-screen');
+  // If an existing user never set a progress code yet, prompt once.
+  if (!STATE.progressCode) setTimeout(openProgressCodeModal, 400);
 } else {
   showScreen('welcome-screen');
 }
@@ -2266,6 +2426,8 @@ document.getElementById('welcome-btn').addEventListener('click', () => {
   save();
   renderHome();
   showScreen('home-screen');
+  // New student — ask for a progress code they'll remember
+  setTimeout(openProgressCodeModal, 300);
 });
 document.getElementById('name-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('welcome-btn').click();
@@ -2348,9 +2510,10 @@ let pendingConfig = null; // { subject, grade }
 
 function openConfig(subject, grade) {
   pendingConfig = { subject, grade };
-  const bank = SUBJECTS[subject].bank[grade] || [];
+  const bank = getFullBank(subject, grade);
+  const unseen = bank.filter(q => !isSeen(q.id)).length;
   document.getElementById('config-title').textContent = `${SUBJECTS[subject].emoji} ${SUBJECTS[subject].name} — Grade ${grade}`;
-  document.getElementById('config-sub').textContent = `Bank has ${bank.length} questions. Pick how many you want in this set.`;
+  document.getElementById('config-sub').textContent = `Bank has ${bank.length} questions (${unseen} fresh for you). Pick how many you want in this set.`;
 
   const sizes = [5, 10, 15, 20].filter(n => n <= bank.length);
   const wrap = document.getElementById('count-options');
@@ -2407,10 +2570,26 @@ function pickWeighted(items, getWeight, count) {
     .map(x => x.it);
 }
 
-// Adaptive picker: biases toward weak topics, but keeps some exposure to everything.
-// Returns { qids, focusTopics } where focusTopics are the weakest topics used for bias.
+// Full bank = static bank + custom (manual-add or AI-generated) questions for this grade.
+function getFullBank(subject, grade) {
+  const base = SUBJECTS[subject].bank[grade] || [];
+  const custom = (STATE.customQuestions[subject] && STATE.customQuestions[subject][grade]) || [];
+  return base.concat(custom);
+}
+
+// Which qids has this student already answered?
+function isSeen(qid) { return !!STATE.seenIds[qid]; }
+
+// Adaptive picker with seen-tracking:
+//   1) filter to unseen questions first (so students never repeat until they've done every one)
+//   2) bias toward weak topics (weighted sampling)
+//   3) if fewer than 20% of the bank is unseen, trigger async AI top-up (fire-and-forget)
+// Returns { qids, focusTopics }.
 function pickAdaptive(subject, grade, count) {
-  const bank = SUBJECTS[subject].bank[grade] || [];
+  const bank = getFullBank(subject, grade);
+  const unseen = bank.filter(q => !isSeen(q.id));
+  const pool = unseen.length >= count ? unseen : bank; // fall back to full bank if not enough unseen left
+
   const a = computeAnalytics();
   const topicPct = {};
   a.list.filter(t => t.subject === subject && t.grade === grade).forEach(t => {
@@ -2424,7 +2603,7 @@ function pickAdaptive(subject, grade, count) {
     if (pct === undefined) return 1.2;           // never-seen topic: slight boost to broaden coverage
     return 1.0 + 2.5 * (1 - pct);                // 100%=>1x, 50%=>2.25x, 0%=>3.5x
   };
-  const picked = pickWeighted(bank, getWeight, count);
+  const picked = pickWeighted(pool, getWeight, count);
   const focusTopics = hasHistory
     ? a.list
         .filter(t => t.subject === subject && t.grade === grade && t.pct < 0.8)
@@ -2432,7 +2611,137 @@ function pickAdaptive(subject, grade, count) {
         .slice(0, 4)
         .map(t => t.topic)
     : [];
+
+  // Fire-and-forget: if the unseen pool is running low, top it up with AI-generated questions.
+  maybeTopUp(subject, grade, bank.length, unseen.length);
+
   return { qids: picked.map(q => q.id), focusTopics };
+}
+
+// AI TOP-UP
+// ---------
+// Triggered when a student has used >=80% of the bank for a grade/subject.
+// Generates 20 authentic NYSED-aligned questions targeting their weakest standard.
+// Debounced per (subject,grade,standard) so we don't re-trigger on every practice session.
+async function maybeTopUp(subject, grade, totalInBank, unseenCount) {
+  if (totalInBank === 0) return;
+  const unseenPct = unseenCount / totalInBank;
+  if (unseenPct > 0.2) return; // still >20% unseen — no action needed
+  if (!hasApiKey()) return;    // need AI key to generate
+
+  // Find weakest standard for this subject/grade from answerLog
+  const weakStandard = findWeakestStandard(subject, grade) || pickRandomStandard(subject, grade);
+  const bucket = `${subject}:${grade}:${weakStandard || 'any'}`;
+  const now = Date.now();
+  const last = STATE.topUpState.lastTriggered[bucket] || 0;
+  if (now - last < 6 * 60 * 60 * 1000) return; // at most every 6 hours per bucket
+  STATE.topUpState.lastTriggered[bucket] = now;
+  saveWithSync();
+
+  try {
+    const generated = await generateQuestions(subject, grade, weakStandard, 20);
+    if (!generated || !generated.length) return;
+    if (!STATE.customQuestions[subject][grade]) STATE.customQuestions[subject][grade] = [];
+    STATE.customQuestions[subject][grade].push(...generated);
+    STATE.topUpState.generated += generated.length;
+    saveWithSync();
+    console.log(`[top-up] +${generated.length} questions for ${subject} G${grade} (${weakStandard})`);
+  } catch (e) {
+    console.warn('[top-up] failed:', e);
+  }
+}
+
+// Returns the standard code this student is weakest on for (subject, grade), or null.
+function findWeakestStandard(subject, grade) {
+  const bank = getFullBank(subject, grade);
+  const qById = {};
+  bank.forEach(q => { qById[q.id] = q; });
+  const stats = {}; // { standard: { correct, total } }
+  Object.entries(STATE.answerLog).forEach(([qid, row]) => {
+    const q = qById[qid];
+    if (!q) return;
+    const std = q.standard || q.topic || 'general';
+    if (!stats[std]) stats[std] = { correct: 0, total: 0 };
+    stats[std].total++;
+    if (row.correct) stats[std].correct++;
+  });
+  let worst = null, worstPct = 1.1;
+  Object.entries(stats).forEach(([std, { correct, total }]) => {
+    if (total < 3) return; // need a bit of data
+    const pct = correct / total;
+    if (pct < worstPct) { worstPct = pct; worst = std; }
+  });
+  return worst;
+}
+
+function pickRandomStandard(subject, grade) {
+  const bank = getFullBank(subject, grade);
+  const stds = bank.map(q => q.standard || q.topic).filter(Boolean);
+  if (!stds.length) return null;
+  return stds[Math.floor(Math.random() * stds.length)];
+}
+
+// Calls AIMLAPI to generate N authentic NYSED-aligned questions for (subject, grade, standard).
+async function generateQuestions(subject, grade, standard, n) {
+  const subjName = SUBJECTS[subject].name;
+  const prompt = `Generate ${n} New York State Testing Program practice questions for Grade ${grade} ${subjName}, aligned to NYSED learning standard "${standard || 'any grade-level standard'}".
+
+Return ONLY a JSON array. Each object has:
+  "type": "mc" (multiple choice) or "fill" (short answer),
+  "topic": short topic label (e.g. "Fractions", "Main Idea"),
+  "standard": NYSED code (e.g. "NY-${grade}.NF.3a"),
+  "stem": the question text (plain text, use "/" for fractions like "3/4"),
+  "choices": array of 4 strings (only for mc),
+  "answer": "A" | "B" | "C" | "D" for mc, or an array of accepted answer strings for fill,
+  "unit": (fill only) the unit label shown after the input, e.g. "students" or "" if none,
+  "hint": (fill only) short hint like "Whole number.".
+
+Match NYSED difficulty and style. Use realistic contexts. No images. No markdown. No explanation outside the JSON array.`;
+
+  const res = await fetch('https://api.aimlapi.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${STATE.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: STATE.model || 'google/gemini-2.5-flash',
+      messages: [
+        { role: 'system', content: 'You are an NYSED test-writing assistant. Output ONLY valid JSON arrays.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.8,
+    }),
+  });
+  if (!res.ok) throw new Error(`topup_http_${res.status}`);
+  const data = await res.json();
+  const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+  if (!content) throw new Error('topup_empty');
+  // Strip code fences if present
+  const cleaned = content.replace(/```json\s*/i, '').replace(/```\s*$/i, '').trim();
+  let arr;
+  try { arr = JSON.parse(cleaned); } catch(e) {
+    // Try to extract first array
+    const m = cleaned.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('topup_parse');
+    arr = JSON.parse(m[0]);
+  }
+  if (!Array.isArray(arr)) throw new Error('topup_not_array');
+  // Tag each with a unique id so they never collide with the static bank
+  const prefix = subject[0] + grade + '-ai';
+  const ts = Date.now().toString(36);
+  return arr.map((q, i) => ({
+    id: `${prefix}-${ts}-${i}`,
+    type: q.type || 'mc',
+    topic: q.topic || 'General',
+    standard: q.standard || standard || '',
+    stem: q.stem || '',
+    choices: q.choices || undefined,
+    answer: q.answer,
+    unit: q.unit,
+    hint: q.hint,
+    _source: 'ai-topup',
+  })).filter(q => q.stem && (q.type === 'fill' || (q.choices && q.choices.length === 4)));
 }
 
 function startQuiz(subject, grade, count) {
@@ -2456,7 +2765,7 @@ function startQuiz(subject, grade, count) {
 // ============================================================
 function getActiveQuestions() {
   if (!STATE.active) return [];
-  const bank = SUBJECTS[STATE.active.subject].bank[STATE.active.grade];
+  const bank = getFullBank(STATE.active.subject, STATE.active.grade);
   return STATE.active.qids.map(id => bank.find(q => q.id === id)).filter(Boolean);
 }
 
@@ -2737,12 +3046,21 @@ function isCorrect(q, answer) {
 function gradeAndShow() {
   const qs = getActiveQuestions();
   const result = { correct: 0, wrong: [], open: [] };
+  const now = Date.now();
   qs.forEach(q => {
     const ans = STATE.active.answers[q.id];
     const r = isCorrect(q, ans);
     if (r === null) result.open.push(q.id);
     else if (r) result.correct++;
     else result.wrong.push(q.id);
+    // Track seen + per-standard performance for adaptive picking and AI top-up
+    STATE.seenIds[q.id] = now;
+    if (!STATE.answerLog[q.id]) STATE.answerLog[q.id] = { attempts: 0, correct: false };
+    STATE.answerLog[q.id].attempts++;
+    STATE.answerLog[q.id].lastAt = now;
+    STATE.answerLog[q.id].standard = q.standard || q.topic || '';
+    if (r === true) STATE.answerLog[q.id].correct = true;
+    else if (r === false && STATE.answerLog[q.id].correct !== true) STATE.answerLog[q.id].correct = false;
   });
   const total = qs.length - result.open.length;
   const summary = {
@@ -2763,7 +3081,7 @@ function gradeAndShow() {
   const pct = total > 0 ? result.correct / total : 0;
   if (pct >= 0.7) STATE.streak = (STATE.streak || 0) + 1;
   else STATE.streak = 0;
-  save();
+  saveWithSync();
   renderResults(summary);
   showScreen('results-screen');
 }
@@ -2790,7 +3108,7 @@ function renderResults(summary) {
   // Wrong list
   const wrongList = document.getElementById('wrong-list');
   wrongList.innerHTML = '';
-  const bank = SUBJECTS[summary.subject].bank[summary.grade];
+  const bank = getFullBank(summary.subject, summary.grade);
   summary.wrongIds.forEach(qid => {
     const q = bank.find(x => x.id === qid);
     if (!q) return;
@@ -3003,8 +3321,8 @@ function computeAnalytics() {
   const byTopic = {};
   const hist = STATE.history || [];
   hist.forEach(h => {
-    const bank = SUBJECTS[h.subject]?.bank[h.grade];
-    if (!bank) return;
+    const bank = getFullBank(h.subject, h.grade);
+    if (!bank || !bank.length) return;
     (h.qids || []).forEach(qid => {
       const q = bank.find(x => x.id === qid);
       if (!q || !q.topic) return;
@@ -3106,7 +3424,7 @@ function renderProgress() {
 }
 
 function startTopicQuiz(t) {
-  const bank = SUBJECTS[t.subject].bank[t.grade] || [];
+  const bank = getFullBank(t.subject, t.grade);
   const pool = bank.filter(q => q.topic === t.topic);
   if (pool.length === 0) { alert('No questions on that topic in this grade.'); return; }
   const count = Math.min(pool.length, 10);
@@ -3175,7 +3493,7 @@ function renderTutorTopics() {
 }
 
 function openTutorTopicList(subject, grade) {
-  const bank = SUBJECTS[subject].bank[grade] || [];
+  const bank = getFullBank(subject, grade);
   const topics = [...new Set(bank.map(q => q.topic).filter(Boolean))].sort();
   document.getElementById('topic-list-heading').textContent = `${SUBJECTS[subject].emoji} ${SUBJECTS[subject].name} · Grade ${grade} — Topics`;
   const list = document.getElementById('topic-list');
@@ -3340,7 +3658,7 @@ async function sendToTutor(userText, isFirst, ctxOverride) {
   else {
     if (STATE.tutor.topicMode) ctx = { subject: STATE.tutor.subject, grade: STATE.tutor.grade, topic: STATE.tutor.topic, topicMode: true };
     else {
-      const bank = SUBJECTS[STATE.tutor.subject].bank[STATE.tutor.grade];
+      const bank = getFullBank(STATE.tutor.subject, STATE.tutor.grade);
       const q = bank.find(x => x.id === STATE.tutor.qid);
       ctx = { subject: STATE.tutor.subject, grade: STATE.tutor.grade, q, userAnswer: '', topicMode: false };
     }
@@ -3553,6 +3871,9 @@ function openSettings() {
   document.getElementById('settings-key').value = STATE.accessCode || '';
   document.getElementById('settings-model').value = STATE.model || 'google/gemini-2.5-flash';
   document.getElementById('settings-tts-voice').value = STATE.ttsVoice || 'nova';
+  document.getElementById('settings-progress-code').value = STATE.progressCode || '';
+  document.getElementById('settings-progress-restore').value = '';
+  document.getElementById('settings-progress-status').textContent = '';
   document.getElementById('settings-error').innerHTML = '';
   document.getElementById('admin-panel').classList.add('hidden');
   document.getElementById('admin-status').innerHTML = '';
@@ -3596,9 +3917,10 @@ document.getElementById('settings-save').addEventListener('click', async () => {
   document.getElementById('settings-modal').classList.add('hidden');
 });
 document.getElementById('settings-reset').addEventListener('click', () => {
-  if (!confirm('Reset ALL progress (history, streak, XP, active test)? Name and access code are kept.')) return;
+  if (!confirm('Reset ALL progress (history, streak, XP, seen-questions, active test)? Name, access code, and progress code are kept.')) return;
   STATE.streak = 0; STATE.xp = 0; STATE.history = []; STATE.active = null;
-  save(); renderHome();
+  STATE.seenIds = {}; STATE.answerLog = {};
+  saveWithSync(); renderHome();
   document.getElementById('settings-modal').classList.add('hidden');
 });
 document.getElementById('settings-tts-test').addEventListener('click', () => {
@@ -3655,6 +3977,119 @@ document.getElementById('admin-copy').addEventListener('click', () => {
   const statusEl = document.getElementById('admin-status');
   statusEl.innerHTML = `<span style="color:var(--success)">✓ Copied to clipboard. Paste it into your index.html.</span>`;
 });
+
+// ============================================================
+// PROGRESS CODE MODAL — first-use prompt + restore
+// ============================================================
+function openProgressCodeModal() {
+  document.getElementById('progress-code-word').value = '';
+  document.getElementById('progress-code-preview').style.display = 'none';
+  document.getElementById('progress-code-preview').textContent = '';
+  document.getElementById('progress-code-error').textContent = '';
+  document.getElementById('progress-code-restore-panel').classList.add('hidden');
+  document.getElementById('progress-code-modal').classList.remove('hidden');
+}
+function closeProgressCodeModal() {
+  document.getElementById('progress-code-modal').classList.add('hidden');
+}
+
+// Live preview as user types
+document.getElementById('progress-code-word').addEventListener('input', (e) => {
+  const clean = e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 8);
+  e.target.value = clean;
+  const preview = document.getElementById('progress-code-preview');
+  const err = document.getElementById('progress-code-error');
+  err.textContent = '';
+  if (clean.length < 3) {
+    preview.style.display = 'none';
+    return;
+  }
+  // Only generate suffix once per word (deterministic until word changes)
+  if (!preview.dataset.forWord || preview.dataset.forWord !== clean) {
+    preview.dataset.suffix = randomCodeSuffix();
+    preview.dataset.forWord = clean;
+  }
+  preview.textContent = clean + '-' + preview.dataset.suffix;
+  preview.style.display = 'block';
+});
+
+document.getElementById('progress-code-save').addEventListener('click', () => {
+  const preview = document.getElementById('progress-code-preview');
+  const err = document.getElementById('progress-code-error');
+  const code = preview.textContent.trim();
+  if (!code || code.length < 5) {
+    err.textContent = 'Type at least 3 letters first.';
+    return;
+  }
+  STATE.progressCode = code;
+  save();
+  saveBundleLocal(code);
+  cloudSyncPush();
+  closeProgressCodeModal();
+  // Show confirmation so they know to write it down
+  alert(`Your progress code is: ${code}\n\nWrite this down! You'll need it if you switch devices.`);
+});
+
+document.getElementById('progress-code-already').addEventListener('click', () => {
+  document.getElementById('progress-code-restore-panel').classList.remove('hidden');
+  document.getElementById('progress-code-restore-input').focus();
+});
+document.getElementById('progress-code-restore-cancel').addEventListener('click', () => {
+  document.getElementById('progress-code-restore-panel').classList.add('hidden');
+});
+document.getElementById('progress-code-restore-go').addEventListener('click', async () => {
+  const code = document.getElementById('progress-code-restore-input').value.trim().toUpperCase();
+  const err = document.getElementById('progress-code-error');
+  err.textContent = '';
+  if (!code || code.length < 5) {
+    err.textContent = 'Type your full progress code (e.g. DORA-7J2K).';
+    return;
+  }
+  // Try local first, then cloud
+  let bundle = loadBundleLocal(code);
+  if (!bundle && CLOUD_SYNC_URL) {
+    bundle = await cloudSyncPull(code);
+  }
+  if (!bundle) {
+    err.textContent = "Couldn't find progress for that code on this device. Double-check the spelling.";
+    return;
+  }
+  applyProgressBundle(bundle);
+  STATE.progressCode = code;
+  save();
+  closeProgressCodeModal();
+  renderHome();
+  alert(`Progress restored for ${STATE.name || 'you'}. Welcome back!`);
+});
+
+// Settings-pane progress code controls
+document.getElementById('settings-progress-copy').addEventListener('click', () => {
+  const v = document.getElementById('settings-progress-code').value;
+  if (!v) return;
+  if (navigator.clipboard) navigator.clipboard.writeText(v).catch(() => {});
+  document.getElementById('settings-progress-status').textContent = `✓ Copied ${v} to clipboard.`;
+});
+document.getElementById('settings-progress-restore-btn').addEventListener('click', async () => {
+  const code = document.getElementById('settings-progress-restore').value.trim().toUpperCase();
+  const statusEl = document.getElementById('settings-progress-status');
+  if (!code || code.length < 5) {
+    statusEl.textContent = 'Type a full progress code first.';
+    return;
+  }
+  let bundle = loadBundleLocal(code);
+  if (!bundle && CLOUD_SYNC_URL) bundle = await cloudSyncPull(code);
+  if (!bundle) {
+    statusEl.textContent = `No saved progress found for ${code} on this device.`;
+    return;
+  }
+  applyProgressBundle(bundle);
+  STATE.progressCode = code;
+  save();
+  document.getElementById('settings-progress-code').value = code;
+  statusEl.textContent = `✓ Restored progress for ${STATE.name || 'that student'}.`;
+  renderHome();
+});
+
 
 
 </script>
