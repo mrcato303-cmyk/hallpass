@@ -520,6 +520,81 @@
     padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
     margin: 8px 0;
   }
+
+  /* FOCUS / PROGRESS SCREEN */
+  .focus-summary {
+    background: var(--surface); padding: 24px 28px; border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  @media (max-width: 760px) { .focus-summary { grid-template-columns: 1fr 1fr; } }
+  .focus-stat { text-align: center; }
+  .focus-stat .n {
+    font-family: 'Fredoka', sans-serif; font-size: 32px; font-weight: 600; color: var(--primary);
+  }
+  .focus-stat .label {
+    font-size: 11px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 800; margin-top: 2px;
+  }
+
+  .bar-row {
+    display: grid; grid-template-columns: 1.6fr 2fr auto; gap: 14px;
+    align-items: center;
+    background: var(--surface); padding: 14px 18px; border-radius: 14px;
+    box-shadow: var(--shadow-sm); margin-bottom: 8px;
+  }
+  @media (max-width: 720px) { .bar-row { grid-template-columns: 1fr; } }
+  .bar-label { font-weight: 700; font-size: 14px; }
+  .bar-label .tag {
+    display: inline-block; font-size: 11px; color: var(--muted);
+    background: var(--surface-soft); padding: 2px 8px; border-radius: 99px;
+    margin-left: 6px; font-weight: 700;
+  }
+  .bar-wrap {
+    background: var(--surface-soft); border-radius: 99px; overflow: hidden;
+    height: 22px; position: relative;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 99px;
+    transition: width 0.6s cubic-bezier(.2,.8,.2,1);
+    display: flex; align-items: center; padding-right: 8px;
+    justify-content: flex-end; color: white; font-weight: 800; font-size: 12px;
+  }
+  .bar-fill.hot { background: linear-gradient(90deg, #ef4444, #ff6b8b); }
+  .bar-fill.warm { background: linear-gradient(90deg, #f59e0b, #fcd34d); color: var(--ink); }
+  .bar-fill.cool { background: linear-gradient(90deg, var(--primary), var(--cyan)); }
+  .bar-fill.good { background: linear-gradient(90deg, var(--success), #34d399); }
+  .bar-action {
+    padding: 8px 14px; border-radius: 99px; background: var(--primary-soft);
+    color: var(--primary); font-weight: 800; font-size: 13px; white-space: nowrap;
+  }
+  .bar-action:hover { background: var(--primary); color: white; }
+
+  /* Suggested topics (tutor screen) */
+  .suggested-wrap {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 18px 22px; border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); margin-bottom: 18px;
+  }
+  .suggested-wrap h3 {
+    margin: 0 0 10px; font-size: 17px; color: var(--ink);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .suggested-wrap .sub {
+    font-size: 13px; color: var(--muted); margin-bottom: 10px;
+  }
+  .suggested-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .suggested-btn {
+    background: white; color: var(--ink); padding: 10px 16px; border-radius: 99px;
+    font-weight: 700; font-size: 13px; box-shadow: var(--shadow-sm);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .suggested-btn:hover { background: var(--primary); color: white; transform: translateY(-1px); }
+  .suggested-btn .pct {
+    background: var(--wrong-soft); color: var(--wrong);
+    font-size: 10px; padding: 2px 6px; border-radius: 99px; font-weight: 800;
+  }
+  .suggested-btn:hover .pct { background: rgba(255,255,255,0.25); color: white; }
 </style>
 </head>
 <body>
@@ -541,6 +616,7 @@
       <button class="tab active" data-nav="home">🏠 Home</button>
       <button class="tab" data-nav="tutor">🦉 Tutor</button>
       <button class="tab" data-nav="review">📜 Review</button>
+      <button class="tab" data-nav="focus">🎯 Focus</button>
     </nav>
     <div class="right">
       <div class="chip streak"><span class="emoji">🔥</span> <span id="home-streak">0</span> streak</div>
@@ -557,12 +633,10 @@
     </div>
   </div>
 
-  <div class="stat-grid">
-    <div class="stat-card"><div class="emoji">📚</div><div class="n">3</div><div class="label">Subjects</div></div>
-    <div class="stat-card"><div class="emoji">🎯</div><div class="n" id="home-attempts">0</div><div class="label">Past attempts</div></div>
-    <div class="stat-card"><div class="emoji">🦉</div><div class="n">AI</div><div class="label">Tutor on call</div></div>
-  </div>
+  <h2 class="section-heading">📝 Take a practice test</h2>
+  <div class="subject-grid" id="subject-grid"></div>
 
+  <h2 class="section-heading" style="margin-top: 36px;">More</h2>
   <div class="quick-actions">
     <div class="action-card" id="home-tutor-btn">
       <div class="emo">🦉</div>
@@ -580,8 +654,11 @@
     </div>
   </div>
 
-  <h2 class="section-heading">Take a practice test</h2>
-  <div class="subject-grid" id="subject-grid"></div>
+  <div class="stat-grid" style="margin-top: 16px;">
+    <div class="stat-card"><div class="emoji">📚</div><div class="n">3</div><div class="label">Subjects</div></div>
+    <div class="stat-card"><div class="emoji">🎯</div><div class="n" id="home-attempts">0</div><div class="label">Past attempts</div></div>
+    <div class="stat-card"><div class="emoji">🦉</div><div class="n">AI</div><div class="label">Tutor on call</div></div>
+  </div>
 </div>
 
 <!-- CONFIG -->
@@ -696,6 +773,7 @@
       <button class="tab" data-nav="home">🏠 Home</button>
       <button class="tab" data-nav="tutor">🦉 Tutor</button>
       <button class="tab active" data-nav="review">📜 Review</button>
+      <button class="tab" data-nav="focus">🎯 Focus</button>
     </nav>
     <div class="right">
       <button class="btn secondary" id="home-btn-review">← Home</button>
@@ -706,6 +784,33 @@
   <div class="history-list" id="history-list"></div>
 </div>
 
+<!-- FOCUS / PROGRESS -->
+<div id="focus-screen" class="screen hidden">
+  <div class="topbar">
+    <div class="logo"><div class="logo-mark">🎟️</div><div class="logo-text">Hall <span class="tag">Pass</span></div></div>
+    <nav class="tabs">
+      <button class="tab" data-nav="home">🏠 Home</button>
+      <button class="tab" data-nav="tutor">🦉 Tutor</button>
+      <button class="tab" data-nav="review">📜 Review</button>
+      <button class="tab active" data-nav="focus">🎯 Focus</button>
+    </nav>
+    <div class="right">
+      <button class="btn secondary" id="home-btn-focus">← Home</button>
+      <button class="icon-btn settings-btn" title="Settings">⚙️</button>
+    </div>
+  </div>
+  <h2 class="section-heading">🎯 Your focus areas</h2>
+  <p style="color:var(--muted);margin:0 0 18px;max-width:640px">
+    Here's a snapshot of how you're doing across topics based on every test you've taken.
+    Topics where you need the most work are at the top.
+  </p>
+  <div class="focus-summary" id="focus-summary"></div>
+  <h3 class="section-heading" style="margin-top:24px;font-size:18px">📊 Work on these first</h3>
+  <div id="focus-weak"></div>
+  <h3 class="section-heading" style="margin-top:28px;font-size:18px">💪 You're crushing these</h3>
+  <div id="focus-strong"></div>
+</div>
+
 <!-- TUTOR TOPIC PICKER -->
 <div id="tutor-topic-screen" class="screen hidden">
   <div class="topbar">
@@ -714,12 +819,14 @@
       <button class="tab" data-nav="home">🏠 Home</button>
       <button class="tab active" data-nav="tutor">🦉 Tutor</button>
       <button class="tab" data-nav="review">📜 Review</button>
+      <button class="tab" data-nav="focus">🎯 Focus</button>
     </nav>
     <div class="right">
       <button class="btn secondary" id="home-btn-topic">← Home</button>
       <button class="icon-btn settings-btn" title="Settings">⚙️</button>
     </div>
   </div>
+  <div id="tutor-suggested"></div>
   <h2 class="section-heading">🦉 Tutoring — pick a subject and grade</h2>
   <div class="subject-grid" id="topic-subjects"></div>
   <h3 class="section-heading" id="topic-list-heading" style="margin-top:24px">Or pick a subject &amp; grade above</h3>
@@ -734,6 +841,7 @@
       <button class="tab" data-nav="home">🏠 Home</button>
       <button class="tab active" data-nav="tutor">🦉 Tutor</button>
       <button class="tab" data-nav="review">📜 Review</button>
+      <button class="tab" data-nav="focus">🎯 Focus</button>
     </nav>
     <div class="right">
       <button class="btn secondary" id="tutor-back-btn">← Back</button>
@@ -751,20 +859,37 @@
   </div>
 </div>
 
+<!-- UNLOCK MODAL (gate for AI features) -->
+<div id="unlock-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>🔒 AI Features Locked</h2>
+    <p id="unlock-intro">The tutor, voice reader, and writing grader are powered by an AI service that costs money to run. To use them, enter the access code <b id="unlock-contact">Dr. Cato</b> gave you.</p>
+    <label>Access code</label>
+    <input type="password" id="unlock-code" placeholder="Enter your code" autocomplete="off" />
+    <div id="unlock-error"></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:14px">No code? You can still take practice tests and see your score breakdown without AI features — just close this and keep exploring.</p>
+    <div class="modal-actions">
+      <button class="btn secondary" id="unlock-cancel">Not now</button>
+      <button class="btn" id="unlock-submit">Unlock</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div id="settings-modal" class="modal-backdrop hidden">
   <div class="modal">
     <h2>⚙️ Settings</h2>
-    <p>Hall Pass uses your AI/ML API key (from <b>aimlapi.com</b>) for both the tutor and the voice reader. The key is stored only in this browser.</p>
+    <p>Your name and preferences are saved only in this browser.</p>
 
     <label>Your name</label>
     <input type="text" id="settings-name" placeholder="Your name" />
 
-    <label>AI/ML API key</label>
-    <input type="password" id="settings-key" placeholder="your-aimlapi-key" autocomplete="off" />
-
-    <label>Tutor model (advanced)</label>
-    <input type="text" id="settings-model" placeholder="google/gemini-2.5-flash" />
+    <label>Access code (unlocks AI features)</label>
+    <div class="voice-row">
+      <input type="password" id="settings-key" placeholder="Code from Dr. Cato" autocomplete="off" />
+      <button class="btn secondary" id="settings-key-clear" type="button">Clear</button>
+    </div>
+    <div id="settings-key-status" style="font-size:13px;margin-top:-6px;margin-bottom:6px;color:var(--muted)"></div>
 
     <label>Voice</label>
     <div class="voice-row">
@@ -777,6 +902,31 @@
         <option value="onyx">Onyx (deep, male)</option>
       </select>
       <button class="btn secondary" id="settings-tts-test">Test 🔊</button>
+    </div>
+
+    <label style="margin-top:14px">Tutor model (advanced)</label>
+    <input type="text" id="settings-model" placeholder="google/gemini-2.5-flash" />
+
+    <!-- Admin-only section: generate or rotate the encrypted key blob -->
+    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+      <button class="btn ghost" id="admin-toggle" type="button" style="font-size:13px;padding:6px 10px">🔧 Admin tools</button>
+      <div id="admin-panel" class="hidden" style="margin-top:12px;padding:14px;background:var(--surface-soft);border-radius:12px">
+        <p style="font-size:13px;color:var(--muted);margin-top:0">
+          <b>For Dr. Cato only.</b> Paste your real API key and pick a short student code. The tool encrypts the key in your browser — it never leaves this page. Copy the blob it produces and replace the empty string on the <code>const ACCESS_BLOB = ""</code> line near the top of <code>index.html</code>, then re-upload to GitHub.
+        </p>
+        <label>Raw API key (starts with <code>sk-</code> or similar)</label>
+        <input type="password" id="admin-rawkey" placeholder="paste real key here" autocomplete="off" />
+        <label>Student access code (short, memorable)</label>
+        <input type="text" id="admin-code" placeholder="e.g. HOOT2026" autocomplete="off" />
+        <div class="modal-actions" style="justify-content:flex-start;gap:10px;margin-top:10px">
+          <button class="btn" id="admin-generate" type="button">Generate blob</button>
+          <button class="btn secondary" id="admin-test" type="button">Test unlock</button>
+        </div>
+        <div id="admin-status" style="font-size:13px;margin-top:8px"></div>
+        <label style="margin-top:10px">Blob to paste into index.html</label>
+        <textarea id="admin-output" rows="4" readonly placeholder="Click Generate — the result appears here." style="width:100%;font-family:monospace;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:10px;background:white"></textarea>
+        <button class="btn secondary" id="admin-copy" type="button" style="margin-top:8px">Copy blob</button>
+      </div>
     </div>
 
     <div id="settings-error"></div>
@@ -1906,6 +2056,24 @@ const SCIENCE_BANK = {
 // HALL PASS — App Logic
 // ============================================================
 
+// =====================================================================
+// ACCESS LOCK
+// ---------------------------------------------------------------------
+// The AI features (tutor, voice reader, writing grader) all need an
+// API key. Instead of asking every student to paste one, Dr. Cato
+// bakes his key in here — encrypted with a short CODE that he hands
+// out to approved students. Without the code, AI features show a
+// "Contact Dr. Cato" lock screen.
+//
+// To configure:
+//   1) Open the site, click the gear, press "Admin tools".
+//   2) Paste your raw API key + pick a student code, click Generate.
+//   3) Copy the long blob it gives you and replace the "" below.
+//   4) Re-upload index.html to GitHub.
+// =====================================================================
+const ACCESS_BLOB = "";
+const ACCESS_CONTACT = "Dr. Cato";
+
 // Resolve passage: 'SAME' -> previous passage
 (function resolvePassages() {
   [MATH_BANK, ELA_BANK, SCIENCE_BANK].forEach(bank => {
@@ -1932,6 +2100,7 @@ const KEY = 'hallpass_v2';
 const STATE = {
   name: '',
   apiKey: '',
+  accessCode: '',
   model: 'google/gemini-2.5-flash',
   ttsModel: 'openai/tts-1',
   ttsVoice: 'nova',
@@ -1962,12 +2131,108 @@ function load() {
 load();
 
 // ============================================================
+// ACCESS LOCK — WebCrypto unlock/encrypt for the shared API key
+// ============================================================
+function _hex2bytes(hex) {
+  const out = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+  return out;
+}
+function _bytes2hex(bytes) {
+  return Array.from(new Uint8Array(bytes)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function _b64tobytes(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+function _bytes2b64(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+async function _deriveKey(code, salt, usages) {
+  const mat = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(code),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    mat,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    usages
+  );
+}
+async function encryptKeyWithCode(apiKey, code) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await _deriveKey(code, salt, ['encrypt']);
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(apiKey));
+  return btoa(JSON.stringify({
+    v: 1,
+    salt: _bytes2hex(salt),
+    iv: _bytes2hex(iv),
+    ct: _bytes2b64(ct),
+  }));
+}
+async function decryptBlobWithCode(blob, code) {
+  const parsed = JSON.parse(atob(blob));
+  const salt = _hex2bytes(parsed.salt);
+  const iv = _hex2bytes(parsed.iv);
+  const ct = _b64tobytes(parsed.ct);
+  const key = await _deriveKey(code, salt, ['decrypt']);
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return new TextDecoder().decode(plain);
+}
+async function unlockWithCode(code) {
+  if (!ACCESS_BLOB) return { error: 'not_configured' };
+  if (!code || !code.trim()) return { error: 'empty' };
+  try {
+    const apiKey = await decryptBlobWithCode(ACCESS_BLOB, code.trim());
+    STATE.apiKey = apiKey;
+    STATE.accessCode = code.trim();
+    save();
+    return { ok: true };
+  } catch (e) {
+    return { error: 'bad_code' };
+  }
+}
+function hasApiKey() {
+  return !!(STATE.apiKey && STATE.apiKey.length > 0);
+}
+function clearAccess() {
+  STATE.apiKey = '';
+  STATE.accessCode = '';
+  save();
+}
+// Auto-unlock on load if a code was saved previously
+(async function autoUnlock() {
+  if (!ACCESS_BLOB) return;                // admin hasn't configured yet
+  if (STATE.apiKey) return;                // already unlocked or dev-pasted
+  if (!STATE.accessCode) return;           // no saved code
+  try {
+    const apiKey = await decryptBlobWithCode(ACCESS_BLOB, STATE.accessCode);
+    STATE.apiKey = apiKey;
+  } catch (e) {
+    // Saved code no longer matches (blob rotated) — wipe it
+    STATE.accessCode = '';
+    save();
+  }
+})();
+
+// ============================================================
 // NAVIGATION
 // ============================================================
-const SCREENS = ['welcome-screen','home-screen','config-screen','practice-screen','results-screen','review-screen','tutor-topic-screen','tutor-screen'];
+const SCREENS = ['welcome-screen','home-screen','config-screen','practice-screen','results-screen','review-screen','focus-screen','tutor-topic-screen','tutor-screen'];
 const TAB_FOR_SCREEN = {
   'home-screen':'home','config-screen':'home','practice-screen':'home','results-screen':'home',
-  'review-screen':'review','tutor-topic-screen':'tutor','tutor-screen':'tutor',
+  'review-screen':'review','focus-screen':'focus','tutor-topic-screen':'tutor','tutor-screen':'tutor',
 };
 function showScreen(id) {
   SCREENS.forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
@@ -2048,7 +2313,7 @@ document.getElementById('home-tutor-btn').addEventListener('click', () => {
 document.querySelectorAll('.settings-btn').forEach(b => b.addEventListener('click', openSettings));
 
 // "← Home" / back buttons across all screens (safe: silently skip if not present)
-['home-btn-results','home-btn-review','home-btn-topic','home-btn-config'].forEach(id => {
+['home-btn-results','home-btn-review','home-btn-topic','home-btn-config','home-btn-focus'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('click', () => { renderHome(); showScreen('home-screen'); });
 });
@@ -2065,6 +2330,7 @@ document.querySelectorAll('.tab[data-nav]').forEach(t => {
     if (nav === 'home')   { renderHome(); showScreen('home-screen'); }
     else if (nav === 'tutor')  { renderTutorTopics(); showScreen('tutor-topic-screen'); }
     else if (nav === 'review') { renderReview(); showScreen('review-screen'); }
+    else if (nav === 'focus')  { renderProgress(); showScreen('focus-screen'); }
   });
 });
 
@@ -2124,12 +2390,49 @@ function shuffle(arr) {
   return a;
 }
 
+// Weighted sampling without replacement (A-Res algorithm).
+// Items with higher weight are more likely to be picked.
+function pickWeighted(items, getWeight, count) {
+  return items
+    .map(it => ({ it, key: Math.pow(Math.random(), 1 / Math.max(0.01, getWeight(it))) }))
+    .sort((a, b) => b.key - a.key)
+    .slice(0, count)
+    .map(x => x.it);
+}
+
+// Adaptive picker: biases toward weak topics, but keeps some exposure to everything.
+// Returns { qids, focusTopics } where focusTopics are the weakest topics used for bias.
+function pickAdaptive(subject, grade, count) {
+  const bank = SUBJECTS[subject].bank[grade] || [];
+  const a = computeAnalytics();
+  const topicPct = {};
+  a.list.filter(t => t.subject === subject && t.grade === grade).forEach(t => {
+    topicPct[t.topic] = t.pct;
+  });
+  const hasHistory = Object.keys(topicPct).length > 0;
+
+  const getWeight = q => {
+    if (!q.topic) return 1.0;
+    const pct = topicPct[q.topic];
+    if (pct === undefined) return 1.2;           // never-seen topic: slight boost to broaden coverage
+    return 1.0 + 2.5 * (1 - pct);                // 100%=>1x, 50%=>2.25x, 0%=>3.5x
+  };
+  const picked = pickWeighted(bank, getWeight, count);
+  const focusTopics = hasHistory
+    ? a.list
+        .filter(t => t.subject === subject && t.grade === grade && t.pct < 0.8)
+        .sort((x, y) => x.pct - y.pct)
+        .slice(0, 4)
+        .map(t => t.topic)
+    : [];
+  return { qids: picked.map(q => q.id), focusTopics };
+}
+
 function startQuiz(subject, grade, count) {
-  const bank = SUBJECTS[subject].bank[grade];
-  const pool = shuffle(bank).slice(0, count);
+  const { qids } = pickAdaptive(subject, grade, count);
   STATE.active = {
     subject, grade, count,
-    qids: pool.map(q => q.id),
+    qids,
     idx: 0,
     answers: {},
     canvases: {},
@@ -2497,27 +2800,155 @@ function renderResults(summary) {
     item.addEventListener('click', () => openTutor(q, summary.subject, summary.grade, summary.answers[q.id]));
     wrongList.appendChild(item);
   });
-  // Open-ended list
+  // Open-ended list (AI-graded via NYSED holistic rubric)
   const openList = document.getElementById('open-list');
   openList.innerHTML = '';
   if (summary.openIds.length) {
-    openList.innerHTML = '<h3 class="section-heading">Open-ended responses (review yourself)</h3>';
+    openList.innerHTML = `<h3 class="section-heading" style="margin-top:24px">📝 Written responses (AI-graded)</h3>`;
+    if (!hasApiKey()) {
+      openList.innerHTML += `<div class="error-banner" style="background:var(--primary-soft);color:var(--primary);">🔒 Enter your access code in Settings to get AI feedback on written answers. Contact ${ACCESS_CONTACT} if you need one.</div>`;
+    }
     summary.openIds.forEach(qid => {
       const q = bank.find(x => x.id === qid);
       if (!q) return;
-      const plain = stripHTML(q.stem).slice(0, 100);
+      const plain = stripHTML(q.stem).slice(0, 130);
+      const ans = stripHTML(summary.answers[qid] || '');
       const item = document.createElement('div');
       item.className = 'open-item';
+      item.dataset.oqid = qid;
       item.innerHTML = `
-        <div class="body">
+        <div class="body" style="flex:1">
           <div class="title">${q.topic || 'Writing'}</div>
-          <div class="preview">${plain}${plain.length >= 100 ? '…' : ''}</div>
-          <div class="your-ans"><b>Your answer:</b> ${stripHTML(summary.answers[qid] || '(blank)')}</div>
+          <div class="preview">${plain}${plain.length >= 130 ? '…' : ''}</div>
+          <div class="your-ans"><b>Your answer:</b> ${ans || '<i>(blank)</i>'}</div>
+          <div class="ai-grade" style="margin-top:10px"></div>
         </div>
-        <div class="cta">Discuss →</div>`;
-      item.addEventListener('click', () => openTutor(q, summary.subject, summary.grade, summary.answers[qid]));
+        <button class="btn ghost discuss-btn">Discuss with tutor →</button>`;
+      item.querySelector('.discuss-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        openTutor(q, summary.subject, summary.grade, summary.answers[qid]);
+      });
       openList.appendChild(item);
     });
+
+    // Kick off AI grading for each item (runs async, updates in place)
+    summary.openIds.forEach(async (qid) => {
+      const itemEl = openList.querySelector(`[data-oqid="${qid}"]`);
+      if (!itemEl) return;
+      const gradeEl = itemEl.querySelector('.ai-grade');
+      const q = bank.find(x => x.id === qid);
+      if (!q) return;
+
+      // Use cached score if already graded in a previous visit
+      if (summary.openScores && summary.openScores[qid]) {
+        renderOpenScore(gradeEl, summary.openScores[qid]);
+        return;
+      }
+      if (!hasApiKey()) {
+        gradeEl.innerHTML = `<span style="color:var(--muted);font-size:13px;font-style:italic">🔒 Access code needed — contact ${ACCESS_CONTACT}.</span>`;
+        return;
+      }
+      gradeEl.innerHTML = `<span style="color:var(--muted);font-size:13px;font-style:italic">⏳ Professor Hoot is scoring your response…</span>`;
+
+      const graded = await gradeOpenEnded(q, summary.answers[qid], summary.subject, summary.grade);
+      if (!graded || graded.error) {
+        gradeEl.innerHTML = `<span style="color:var(--muted);font-size:13px">Couldn't grade: ${graded?.error || 'unknown error'}.</span>`;
+        return;
+      }
+      if (!summary.openScores) summary.openScores = {};
+      summary.openScores[qid] = graded;
+      save();
+      renderOpenScore(gradeEl, graded);
+    });
+  }
+}
+
+function renderOpenScore(el, graded) {
+  const pct = graded.score / graded.max;
+  const color = pct === 1 ? 'var(--success)' : pct >= 0.5 ? 'var(--primary)' : 'var(--coral)';
+  el.innerHTML = `
+    <div style="display:inline-block;background:${color};color:white;padding:5px 12px;border-radius:99px;font-weight:800;font-size:13px;letter-spacing:.02em">
+      ${graded.score}/${graded.max} pts · NYSED ${graded.max}-pt rubric
+    </div>
+    <div style="margin-top:8px;font-size:14px;line-height:1.55;color:var(--ink);background:var(--surface-soft);padding:12px 14px;border-radius:12px;border-left:4px solid ${color}">
+      <b>Feedback:</b> ${graded.feedback}
+    </div>`;
+}
+
+// ============================================================
+// AI GRADING — open-ended responses (NYSED holistic rubric)
+// ============================================================
+async function gradeOpenEnded(q, answer, subject, grade) {
+  const rubricType = q.rubricType || '2pt';
+  const max = rubricType === '4pt' ? 4 : 2;
+
+  if (!answer || !answer.toString().trim()) {
+    return { score: 0, max, feedback: 'No response was written. Blank answers receive 0 points on the NYSED rubric.' };
+  }
+  if (!hasApiKey()) return { error: `Locked — ask ${ACCESS_CONTACT} for the access code` };
+
+  const rubric2 = `2 points — Response is complete, accurate, and shows clear understanding. Uses evidence appropriately. Grammar supports meaning.
+1 point — Response shows partial understanding. Missing a key detail, or has some errors, but makes a real attempt at the task.
+0 points — Response is incorrect, off-topic, irrelevant, or blank.`;
+
+  const rubric4 = `4 points — Insightful, fully developed response. Strong evidence from the passage/question. Clear reasoning, well-organized. Grammar and conventions support meaning.
+3 points — Mostly complete with minor gaps or small errors. Clear main idea with adequate support. Grammar supports meaning.
+2 points — Partial response with some understanding. Weak or missing support. Noticeable errors that don't fully obscure meaning.
+1 point — Minimal response. Major gaps, off-track reasoning, or significant errors that obscure meaning.
+0 points — Off-topic, incorrect, or blank.`;
+
+  const rubric = max === 4 ? rubric4 : rubric2;
+  const subjectName = (SUBJECTS[subject] && SUBJECTS[subject].name) || subject;
+  const stem = stripHTML(q.stem);
+  const passage = q.passage ? `PASSAGE: ${stripHTML(q.passage)}\n\n` : '';
+
+  const system = `You are a warm but honest New York State Grade ${grade} ${subjectName} assessment scorer. Use the official NYSED ${max}-point holistic rubric exactly as written.
+
+RUBRIC (${max}-point):
+${rubric}
+
+HARD RULES:
+1. Award a whole-number score from 0 to ${max}. No half points.
+2. Be grade-appropriate. A ${grade}th-grader is not expected to write like a high-schooler. Focus on whether they met the rubric criteria for their grade.
+3. Keep feedback SHORT (2-3 sentences), warm, specific. Say one thing that is working, and one concrete thing to improve next time.
+4. Never reveal the "correct answer" — coach the reasoning instead.
+5. Respond in EXACTLY this format, nothing else:
+SCORE: X/${max}
+FEEDBACK: [your 2-3 sentence feedback]`;
+
+  const userMsg = `${passage}QUESTION: ${stem}\n\nSTUDENT RESPONSE: ${answer}`;
+
+  try {
+    const res = await fetch('https://api.aimlapi.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STATE.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: STATE.model || 'google/gemini-2.5-flash',
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: userMsg },
+        ],
+        max_tokens: 240,
+        temperature: 0.2,
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      return { error: `API ${res.status}: ${t.slice(0, 140)}` };
+    }
+    const data = await res.json();
+    const text = ((data.choices || [])[0]?.message?.content || '').trim();
+    const scoreMatch = text.match(/SCORE:\s*(\d+)\s*\/\s*(\d+)/i);
+    const fbMatch = text.match(/FEEDBACK:\s*([\s\S]+)$/i);
+    if (!scoreMatch) return { error: 'Could not parse response' };
+    const score = Math.max(0, Math.min(max, parseInt(scoreMatch[1], 10)));
+    const feedback = fbMatch ? fbMatch[1].trim() : text;
+    return { score, max, feedback };
+  } catch (e) {
+    return { error: e.message };
   }
 }
 
@@ -2558,9 +2989,160 @@ function renderReview() {
 }
 
 // ============================================================
+// ANALYTICS — topic-level strengths and weaknesses (no AI)
+// ============================================================
+function computeAnalytics() {
+  // Aggregate correct/total per (subject, grade, topic) across all history
+  const byTopic = {};
+  const hist = STATE.history || [];
+  hist.forEach(h => {
+    const bank = SUBJECTS[h.subject]?.bank[h.grade];
+    if (!bank) return;
+    (h.qids || []).forEach(qid => {
+      const q = bank.find(x => x.id === qid);
+      if (!q || !q.topic) return;
+      const key = `${h.subject}::${h.grade}::${q.topic}`;
+      if (!byTopic[key]) {
+        byTopic[key] = {
+          key, subject: h.subject, grade: h.grade, topic: q.topic,
+          correct: 0, total: 0, attempts: 0, qids: new Set(),
+        };
+      }
+      const entry = byTopic[key];
+      entry.qids.add(qid);
+      const answer = h.answers ? h.answers[qid] : undefined;
+      const r = isCorrect(q, answer);
+      if (r === null) return; // skip open-ended here
+      entry.total += 1;
+      entry.attempts += 1;
+      if (r === true) entry.correct += 1;
+    });
+  });
+
+  const list = Object.values(byTopic).map(t => ({
+    ...t,
+    qids: Array.from(t.qids),
+    pct: t.total > 0 ? t.correct / t.total : 0,
+    missed: Math.max(0, t.total - t.correct),
+  }));
+
+  const totalQ = list.reduce((s, t) => s + t.total, 0);
+  const totalCorrect = list.reduce((s, t) => s + t.correct, 0);
+  const overall = totalQ > 0 ? totalCorrect / totalQ : 0;
+
+  // Weak = sort by lowest pct, then by most attempts (so repeated misses outrank one-offs)
+  const weak = list.filter(t => t.pct < 1.0).sort((a, b) => {
+    if (a.pct !== b.pct) return a.pct - b.pct;
+    return b.attempts - a.attempts;
+  });
+  // Strong = perfect score AND at least one attempt
+  const strong = list.filter(t => t.pct === 1.0 && t.total > 0).sort((a, b) => b.attempts - a.attempts);
+
+  return { list, weak, strong, totalQ, totalCorrect, overall, attempts: hist.length };
+}
+
+function renderProgress() {
+  const a = computeAnalytics();
+  const summaryEl = document.getElementById('focus-summary');
+  summaryEl.innerHTML = `
+    <div class="focus-stat"><div class="n">${a.attempts}</div><div class="label">Tests taken</div></div>
+    <div class="focus-stat"><div class="n">${a.totalQ}</div><div class="label">Questions answered</div></div>
+    <div class="focus-stat"><div class="n">${a.totalQ > 0 ? Math.round(100 * a.overall) : 0}%</div><div class="label">Overall accuracy</div></div>
+    <div class="focus-stat"><div class="n">${a.weak.length}</div><div class="label">Topics to grow</div></div>`;
+
+  const weakEl = document.getElementById('focus-weak');
+  const strongEl = document.getElementById('focus-strong');
+  weakEl.innerHTML = '';
+  strongEl.innerHTML = '';
+
+  if (a.attempts === 0) {
+    weakEl.innerHTML = `<div class="empty-state">Take a test first — once you've answered some questions, your focus areas show up here.</div>`;
+    return;
+  }
+
+  if (a.weak.length === 0) {
+    weakEl.innerHTML = `<div class="empty-state">🏆 You aced every topic you've practiced. Try new subjects or harder grades to keep growing.</div>`;
+  } else {
+    a.weak.slice(0, 12).forEach(t => {
+      const pct = Math.round(100 * t.pct);
+      const cls = pct < 40 ? 'hot' : pct < 70 ? 'warm' : 'cool';
+      const subj = SUBJECTS[t.subject];
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-label">${t.topic}<span class="tag">${subj.emoji} ${subj.name} · Gr ${t.grade}</span></div>
+        <div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${Math.max(pct, 6)}%">${pct}%</div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="bar-action practice-topic">Practice</button>
+          <button class="bar-action tutor-topic" style="background:var(--gold-dark);color:white">🦉 Tutor</button>
+        </div>`;
+      row.querySelector('.practice-topic').addEventListener('click', () => startTopicQuiz(t));
+      row.querySelector('.tutor-topic').addEventListener('click', () => openTutorByTopic(t.subject, t.grade, t.topic));
+      weakEl.appendChild(row);
+    });
+  }
+
+  if (a.strong.length === 0) {
+    strongEl.innerHTML = `<div class="empty-state" style="padding:16px;font-size:14px">No perfect topics yet — keep practicing!</div>`;
+  } else {
+    a.strong.slice(0, 8).forEach(t => {
+      const subj = SUBJECTS[t.subject];
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-label">${t.topic}<span class="tag">${subj.emoji} ${subj.name} · Gr ${t.grade}</span></div>
+        <div class="bar-wrap"><div class="bar-fill good" style="width:100%">100%</div></div>
+        <div style="color:var(--success);font-weight:800;font-size:14px">✓ mastered</div>`;
+      strongEl.appendChild(row);
+    });
+  }
+}
+
+function startTopicQuiz(t) {
+  const bank = SUBJECTS[t.subject].bank[t.grade] || [];
+  const pool = bank.filter(q => q.topic === t.topic);
+  if (pool.length === 0) { alert('No questions on that topic in this grade.'); return; }
+  const count = Math.min(pool.length, 10);
+  STATE.active = {
+    subject: t.subject, grade: t.grade, count,
+    qids: shuffle(pool).slice(0, count).map(q => q.id),
+    idx: 0, answers: {}, canvases: {}, startedAt: Date.now(),
+    focusTopic: t.topic,
+  };
+  save();
+  renderPractice();
+  showScreen('practice-screen');
+  setupCanvas();
+}
+
+// ============================================================
 // TUTOR: topic picker (no test required)
 // ============================================================
 function renderTutorTopics() {
+  // Render "Suggested for you" (weak topics from analytics)
+  const suggEl = document.getElementById('tutor-suggested');
+  suggEl.innerHTML = '';
+  const a = computeAnalytics();
+  if (a.weak.length > 0) {
+    const top = a.weak.slice(0, 6);
+    const box = document.createElement('div');
+    box.className = 'suggested-wrap';
+    box.innerHTML = `
+      <h3>🎯 Suggested for you</h3>
+      <div class="sub">Based on tests you've taken, these topics would give you the biggest boost.</div>
+      <div class="suggested-list"></div>`;
+    const list = box.querySelector('.suggested-list');
+    top.forEach(t => {
+      const subj = SUBJECTS[t.subject];
+      const b = document.createElement('button');
+      b.className = 'suggested-btn';
+      b.innerHTML = `${subj.emoji} <b>${t.topic}</b> <span style="color:var(--muted);font-size:11px">Gr ${t.grade}</span> <span class="pct">${Math.round(t.pct*100)}%</span>`;
+      b.addEventListener('click', () => openTutorByTopic(t.subject, t.grade, t.topic));
+      list.appendChild(b);
+    });
+    suggEl.appendChild(box);
+  }
+
   const wrap = document.getElementById('topic-subjects');
   wrap.innerHTML = '';
   Object.entries(SUBJECTS).forEach(([key, s]) => {
@@ -2739,8 +3321,9 @@ Open with a warm 1-sentence hello using ${name}'s name, brief non-shaming acknow
 }
 
 async function sendToTutor(userText, isFirst, ctxOverride) {
-  if (!STATE.apiKey) {
-    document.getElementById('tutor-error').innerHTML = `<div class="error-banner">⚙️ No API key set yet. Click the gear icon in the top corner and add your AI/ML API key, then come back.</div>`;
+  if (!hasApiKey()) {
+    document.getElementById('tutor-error').innerHTML = `<div class="error-banner">🔒 You need an access code for this. Contact <b>${ACCESS_CONTACT}</b>.</div>`;
+    showUnlockModal();
     return;
   }
 
@@ -2821,8 +3404,10 @@ let currentAudio = null;
 async function speak(text) {
   if (!text) return;
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  if (!STATE.apiKey) {
-    alert('No API key. Click the gear icon and add your AI/ML API key to use the voice.');
+  if (!hasApiKey()) {
+    showUnlockModal();
+    const errEl = document.getElementById('unlock-error');
+    if (errEl) errEl.innerHTML = `<div class="error-banner" style="background:var(--primary-soft);color:var(--primary)">🔊 You need an access code to use the voice reader. Contact <b>${ACCESS_CONTACT}</b>.</div>`;
     return;
   }
   // Truncate overly-long text to protect budget
@@ -2874,44 +3459,175 @@ function stripHTML(html) {
 }
 
 // ============================================================
+// UNLOCK MODAL — AI feature gate
+// ============================================================
+function showUnlockModal(reason) {
+  const intro = document.getElementById('unlock-intro');
+  const contactEl = document.getElementById('unlock-contact');
+  if (contactEl) contactEl.textContent = ACCESS_CONTACT;
+  if (!ACCESS_BLOB && intro) {
+    intro.innerHTML = `AI features aren't configured on this copy yet. If you're the admin, open <b>Settings → Admin tools</b> to generate an access code.`;
+  }
+  document.getElementById('unlock-error').innerHTML = '';
+  document.getElementById('unlock-code').value = '';
+  document.getElementById('unlock-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('unlock-code').focus(), 50);
+}
+function hideUnlockModal() {
+  document.getElementById('unlock-modal').classList.add('hidden');
+}
+function requireApiKey(featureName) {
+  if (hasApiKey()) return true;
+  const errEl = document.getElementById('unlock-error');
+  showUnlockModal();
+  if (errEl) errEl.innerHTML = `<div class="error-banner" style="background:var(--primary-soft);color:var(--primary)">This feature (${featureName || 'AI'}) needs your access code.</div>`;
+  return false;
+}
+document.getElementById('unlock-cancel').addEventListener('click', hideUnlockModal);
+document.getElementById('unlock-submit').addEventListener('click', async () => {
+  const code = document.getElementById('unlock-code').value;
+  const errEl = document.getElementById('unlock-error');
+  errEl.innerHTML = '';
+  if (!ACCESS_BLOB) {
+    errEl.innerHTML = `<div class="error-banner">No access blob configured. Admin must generate one in Settings → Admin tools.</div>`;
+    return;
+  }
+  const r = await unlockWithCode(code);
+  if (r.ok) {
+    errEl.innerHTML = `<div class="success-banner" style="background:var(--success);color:white;padding:10px 14px;border-radius:10px;font-weight:600">🔓 Unlocked! AI features are now live.</div>`;
+    setTimeout(hideUnlockModal, 900);
+  } else if (r.error === 'bad_code') {
+    errEl.innerHTML = `<div class="error-banner">That code doesn't match. Double-check what ${ACCESS_CONTACT} gave you.</div>`;
+  } else if (r.error === 'empty') {
+    errEl.innerHTML = `<div class="error-banner">Type the code first.</div>`;
+  } else {
+    errEl.innerHTML = `<div class="error-banner">Couldn't unlock. ${r.error || ''}</div>`;
+  }
+});
+document.getElementById('unlock-code').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('unlock-submit').click();
+});
+
+// ============================================================
 // SETTINGS
 // ============================================================
+function refreshKeyStatus() {
+  const el = document.getElementById('settings-key-status');
+  if (!el) return;
+  if (hasApiKey()) {
+    el.innerHTML = `<span style="color:var(--success)">✓ AI features unlocked on this device.</span>`;
+  } else if (!ACCESS_BLOB) {
+    el.innerHTML = `<span style="color:var(--muted)">Admin hasn't configured a code yet — use Admin tools below.</span>`;
+  } else {
+    el.innerHTML = `<span style="color:var(--muted)">Locked. Enter the code ${ACCESS_CONTACT} gave you, then Save.</span>`;
+  }
+}
 function openSettings() {
   document.getElementById('settings-name').value = STATE.name || '';
-  document.getElementById('settings-key').value = STATE.apiKey || '';
+  document.getElementById('settings-key').value = STATE.accessCode || '';
   document.getElementById('settings-model').value = STATE.model || 'google/gemini-2.5-flash';
   document.getElementById('settings-tts-voice').value = STATE.ttsVoice || 'nova';
   document.getElementById('settings-error').innerHTML = '';
+  document.getElementById('admin-panel').classList.add('hidden');
+  document.getElementById('admin-status').innerHTML = '';
+  document.getElementById('admin-output').value = '';
+  refreshKeyStatus();
   document.getElementById('settings-modal').classList.remove('hidden');
 }
 document.getElementById('settings-cancel').addEventListener('click', () => {
   document.getElementById('settings-modal').classList.add('hidden');
 });
-document.getElementById('settings-save').addEventListener('click', () => {
+document.getElementById('settings-key-clear').addEventListener('click', () => {
+  clearAccess();
+  document.getElementById('settings-key').value = '';
+  refreshKeyStatus();
+});
+document.getElementById('settings-save').addEventListener('click', async () => {
   const name = document.getElementById('settings-name').value.trim();
-  const key = document.getElementById('settings-key').value.trim();
+  const code = document.getElementById('settings-key').value.trim();
   const model = document.getElementById('settings-model').value.trim() || 'google/gemini-2.5-flash';
   const voice = document.getElementById('settings-tts-voice').value;
-  if (!name) { document.getElementById('settings-error').innerHTML = '<div class="error-banner">Please enter a name.</div>'; return; }
-  STATE.name = name; STATE.apiKey = key; STATE.model = model; STATE.ttsVoice = voice;
+  const errEl = document.getElementById('settings-error');
+  errEl.innerHTML = '';
+  if (!name) { errEl.innerHTML = '<div class="error-banner">Please enter a name.</div>'; return; }
+  STATE.name = name; STATE.model = model; STATE.ttsVoice = voice;
+  // If the code field changed and is non-empty, try to unlock
+  if (code && code !== STATE.accessCode) {
+    const r = await unlockWithCode(code);
+    if (r.error === 'not_configured') {
+      errEl.innerHTML = `<div class="error-banner">AI isn't configured on this copy yet. Use Admin tools to generate a blob first, or leave the code blank.</div>`;
+      return;
+    }
+    if (r.error === 'bad_code') {
+      errEl.innerHTML = `<div class="error-banner">That code doesn't unlock the blob. Check with ${ACCESS_CONTACT}.</div>`;
+      return;
+    }
+  } else if (!code) {
+    clearAccess();
+  }
   save();
   renderHome();
   document.getElementById('settings-modal').classList.add('hidden');
 });
 document.getElementById('settings-reset').addEventListener('click', () => {
-  if (!confirm('Reset ALL progress (history, streak, XP, active test)? Name and API key are kept.')) return;
+  if (!confirm('Reset ALL progress (history, streak, XP, active test)? Name and access code are kept.')) return;
   STATE.streak = 0; STATE.xp = 0; STATE.history = []; STATE.active = null;
   save(); renderHome();
   document.getElementById('settings-modal').classList.add('hidden');
 });
 document.getElementById('settings-tts-test').addEventListener('click', () => {
   const voice = document.getElementById('settings-tts-voice').value;
-  const key = document.getElementById('settings-key').value.trim();
-  if (!key) { alert('Enter your API key first.'); return; }
-  const savedKey = STATE.apiKey, savedVoice = STATE.ttsVoice;
-  STATE.apiKey = key; STATE.ttsVoice = voice;
+  if (!hasApiKey()) { alert(`No access code yet. Enter your code or contact ${ACCESS_CONTACT}.`); return; }
+  const savedVoice = STATE.ttsVoice;
+  STATE.ttsVoice = voice;
   speak(`Hi! I am the ${voice} voice. This is how I sound reading a question out loud.`);
-  setTimeout(() => { STATE.apiKey = savedKey; STATE.ttsVoice = savedVoice; }, 100);
+  setTimeout(() => { STATE.ttsVoice = savedVoice; }, 100);
+});
+
+// ============================================================
+// ADMIN TOOLS — generate the encrypted blob
+// ============================================================
+document.getElementById('admin-toggle').addEventListener('click', () => {
+  document.getElementById('admin-panel').classList.toggle('hidden');
+});
+document.getElementById('admin-generate').addEventListener('click', async () => {
+  const statusEl = document.getElementById('admin-status');
+  const outEl = document.getElementById('admin-output');
+  statusEl.innerHTML = '';
+  outEl.value = '';
+  const raw = document.getElementById('admin-rawkey').value.trim();
+  const code = document.getElementById('admin-code').value.trim();
+  if (!raw) { statusEl.innerHTML = `<span style="color:var(--coral)">Paste the real API key first.</span>`; return; }
+  if (!code || code.length < 4) { statusEl.innerHTML = `<span style="color:var(--coral)">Pick a code (at least 4 characters).</span>`; return; }
+  try {
+    const blob = await encryptKeyWithCode(raw, code);
+    outEl.value = blob;
+    statusEl.innerHTML = `<span style="color:var(--success)">✓ Blob generated. Copy it below, then replace the empty string on the <code>const ACCESS_BLOB = ""</code> line at the top of your index.html file, and re-upload to GitHub.</span>`;
+  } catch (e) {
+    statusEl.innerHTML = `<span style="color:var(--coral)">Couldn't encrypt: ${e.message}</span>`;
+  }
+});
+document.getElementById('admin-test').addEventListener('click', async () => {
+  const statusEl = document.getElementById('admin-status');
+  const blob = document.getElementById('admin-output').value.trim();
+  const code = document.getElementById('admin-code').value.trim();
+  if (!blob) { statusEl.innerHTML = `<span style="color:var(--coral)">Generate a blob first.</span>`; return; }
+  try {
+    const plain = await decryptBlobWithCode(blob, code);
+    const masked = plain.slice(0, 6) + '…' + plain.slice(-4);
+    statusEl.innerHTML = `<span style="color:var(--success)">✓ Test passed. Code "${code}" successfully decrypts back to <code>${masked}</code>.</span>`;
+  } catch (e) {
+    statusEl.innerHTML = `<span style="color:var(--coral)">Test failed: ${e.message}</span>`;
+  }
+});
+document.getElementById('admin-copy').addEventListener('click', () => {
+  const outEl = document.getElementById('admin-output');
+  if (!outEl.value) return;
+  outEl.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  if (navigator.clipboard) navigator.clipboard.writeText(outEl.value).catch(() => {});
+  const statusEl = document.getElementById('admin-status');
+  statusEl.innerHTML = `<span style="color:var(--success)">✓ Copied to clipboard. Paste it into your index.html.</span>`;
 });
 
 
