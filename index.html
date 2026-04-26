@@ -880,7 +880,7 @@
   <div class="modal" style="max-width:460px">
     <h2>🔑 Make your progress code</h2>
     <p style="margin-top:4px">Pick a short word you'll remember — like your pet's name, a favorite color, or your nickname. We'll add a few random letters so it's unique.</p>
-    <p style="font-size:13px;color:var(--muted);margin-top:6px">Use this code to bring your practice progress to another computer or tablet.</p>
+    <p style="font-size:13px;color:var(--muted);margin-top:6px">Use this code to recover your progress on <b>this device</b> if your browser data gets cleared. To switch to a different device, use Settings → Download progress instead.</p>
 
     <label style="margin-top:12px">Your memorable word (3-8 letters)</label>
     <input type="text" id="progress-code-word" placeholder="e.g. DORA" autocomplete="off" maxlength="8" style="text-transform:uppercase;letter-spacing:2px;font-size:18px;font-family:monospace" />
@@ -899,7 +899,7 @@
     <!-- Restore-existing panel (hidden by default) -->
     <div id="progress-code-restore-panel" class="hidden" style="margin-top:14px;padding:14px;background:var(--surface-soft);border-radius:12px">
       <label>Paste your existing progress code</label>
-      <input type="text" id="progress-code-restore-input" placeholder="e.g. DORA-7J2K" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
+      <input type="text" id="progress-code-restore-input" placeholder="e.g. DORA-7J2K (this device only)" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
       <div class="modal-actions" style="margin-top:10px">
         <button class="btn secondary" id="progress-code-restore-cancel" type="button">Back</button>
         <button class="btn" id="progress-code-restore-go" type="button">Restore</button>
@@ -922,12 +922,22 @@
       <input type="text" id="settings-progress-code" placeholder="e.g. DORA-7J2K" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
       <button class="btn secondary" id="settings-progress-copy" type="button">Copy</button>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-top:-4px;margin-bottom:6px">Write this down! Use it to move your progress to another device. Keep the whole code (word + dash + letters).</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:-4px;margin-bottom:6px">Write this down — you'll need it to recover your progress on <b>this device</b> if your browser data gets cleared. Codes don't travel between devices.</div>
     <div class="voice-row">
-      <input type="text" id="settings-progress-restore" placeholder="Paste a code to restore from another device" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
+      <input type="text" id="settings-progress-restore" placeholder="Paste a code (this device only)" autocomplete="off" style="text-transform:uppercase;letter-spacing:1px;font-family:monospace" />
       <button class="btn secondary" id="settings-progress-restore-btn" type="button">Restore</button>
     </div>
     <div id="settings-progress-status" style="font-size:13px;margin-top:4px;color:var(--muted)"></div>
+
+    <div style="margin-top:12px;padding:12px;background:var(--surface-soft);border-radius:10px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">📁 Move progress to another device</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Codes only restore on the device where you saved them. To switch devices, download your progress here, then upload it on the new device.</div>
+      <div class="voice-row">
+        <button class="btn secondary" id="settings-progress-download" type="button">⬇️ Download progress</button>
+        <button class="btn secondary" id="settings-progress-upload" type="button">⬆️ Upload progress</button>
+        <input type="file" id="settings-progress-upload-input" accept=".json,application/json" style="display:none" />
+      </div>
+    </div>
 
     <label style="margin-top:10px">Access code (unlocks AI features)</label>
     <div class="voice-row">
@@ -976,6 +986,13 @@
         <label style="margin-top:10px">Blob to paste into index.html</label>
         <textarea id="admin-output" rows="4" readonly placeholder="Click Generate — the result appears here." style="width:100%;font-family:monospace;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:10px;background:white"></textarea>
         <button class="btn secondary" id="admin-copy" type="button" style="margin-top:8px">Copy blob</button>
+        <hr style="margin:14px 0;border:none;border-top:1px solid var(--border)" />
+        <label>Pre-bake test voices (one-time)</label>
+        <p style="font-size:12px;color:var(--muted);margin:6px 0">
+          Generates a sample MP3 for each voice using AIMLAPI, packaged as a single zip. Drop the unzipped <code>voices/</code> folder into this project (so the path is <code>voices/nova.mp3</code> etc.) and push to GitHub. After that, the voice Test button plays the static MP3 instead of calling AIMLAPI — instant, free, and abuse-proof.
+        </p>
+        <button class="btn" id="admin-bake-voices" type="button">Generate test voices zip</button>
+        <div id="admin-bake-status" style="font-size:13px;margin-top:8px"></div>
       </div>
     </div>
 
@@ -3725,10 +3742,12 @@ async function sendToTutor(userText, isFirst, ctxOverride) {
 // VOICE (OpenAI TTS via AIML API)
 // ============================================================
 let currentAudio = null;
+let currentTTSFetch = null;  // AbortController for the in-flight TTS request
 
 async function speak(text) {
   if (!text) return;
   if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (currentTTSFetch) { currentTTSFetch.abort(); currentTTSFetch = null; }
   if (!hasApiKey()) {
     showUnlockModal();
     const errEl = document.getElementById('unlock-error');
@@ -3737,6 +3756,8 @@ async function speak(text) {
   }
   // Truncate overly-long text to protect budget
   const trimmed = text.slice(0, 2000);
+  const ctrl = new AbortController();
+  currentTTSFetch = ctrl;
   try {
     // AIMLAPI /v1/tts returns JSON { audio: { url } } or { audio: url }.
     const res = await fetch('https://api.aimlapi.com/v1/tts', {
@@ -3749,8 +3770,10 @@ async function speak(text) {
         model: 'openai/gpt-4o-mini-tts',
         text: trimmed,
         voice: STATE.ttsVoice || 'nova',
-      })
+      }),
+      signal: ctrl.signal
     });
+    if (currentTTSFetch !== ctrl) return; // a newer click superseded us
     if (!res.ok) {
       const t = await res.text();
       console.warn('TTS error', res.status, t);
@@ -3775,15 +3798,19 @@ async function speak(text) {
       const blob = await res.blob();
       audioUrl = URL.createObjectURL(blob);
     }
+    if (currentTTSFetch !== ctrl) return; // superseded between fetch and play
     currentAudio = new Audio(audioUrl);
     currentAudio.play().catch(err => {
       console.warn('Audio play failed', err);
       browserSpeak(trimmed);
     });
   } catch (e) {
+    if (e.name === 'AbortError') return; // expected when superseded by another click
     console.warn('TTS fetch failed', e);
     alert('Could not reach the voice reader. Falling back to browser voice.');
     browserSpeak(trimmed);
+  } finally {
+    if (currentTTSFetch === ctrl) currentTTSFetch = null;
   }
 }
 function browserSpeak(text) {
@@ -3923,13 +3950,9 @@ document.getElementById('settings-reset').addEventListener('click', () => {
   saveWithSync(); renderHome();
   document.getElementById('settings-modal').classList.add('hidden');
 });
-document.getElementById('settings-tts-test').addEventListener('click', () => {
+document.getElementById('settings-tts-test').addEventListener('click', async () => {
   const voice = document.getElementById('settings-tts-voice').value;
-  if (!hasApiKey()) { alert(`No access code yet. Enter your code or contact ${ACCESS_CONTACT}.`); return; }
-  const savedVoice = STATE.ttsVoice;
-  STATE.ttsVoice = voice;
-  speak(`Hi! I am the ${voice} voice. This is how I sound reading a question out loud.`);
-  setTimeout(() => { STATE.ttsVoice = savedVoice; }, 100);
+  await playTestVoice(voice);
 });
 
 // ============================================================
@@ -4027,7 +4050,7 @@ document.getElementById('progress-code-save').addEventListener('click', () => {
   cloudSyncPush();
   closeProgressCodeModal();
   // Show confirmation so they know to write it down
-  alert(`Your progress code is: ${code}\n\nWrite this down! You'll need it if you switch devices.`);
+  alert(`Your progress code is: ${code}\n\nWrite it down — you'll need it to recover progress on THIS device if your browser data gets cleared.\n\nTo move progress to another device, use Settings → Download progress.`);
 });
 
 document.getElementById('progress-code-already').addEventListener('click', () => {
@@ -4051,7 +4074,7 @@ document.getElementById('progress-code-restore-go').addEventListener('click', as
     bundle = await cloudSyncPull(code);
   }
   if (!bundle) {
-    err.textContent = "Couldn't find progress for that code on this device. Double-check the spelling.";
+    err.textContent = "No progress saved under that code on this device. Codes don't travel between devices — to move progress from another device, use Settings → Upload progress.";
     return;
   }
   applyProgressBundle(bundle);
@@ -4079,7 +4102,7 @@ document.getElementById('settings-progress-restore-btn').addEventListener('click
   let bundle = loadBundleLocal(code);
   if (!bundle && CLOUD_SYNC_URL) bundle = await cloudSyncPull(code);
   if (!bundle) {
-    statusEl.textContent = `No saved progress found for ${code} on this device.`;
+    statusEl.textContent = `No saved progress for ${code} on this device. Codes don't travel between devices — use ⬆️ Upload progress below to bring it from another device.`;
     return;
   }
   applyProgressBundle(bundle);
@@ -4087,6 +4110,167 @@ document.getElementById('settings-progress-restore-btn').addEventListener('click
   save();
   document.getElementById('settings-progress-code').value = code;
   statusEl.textContent = `✓ Restored progress for ${STATE.name || 'that student'}.`;
+  renderHome();
+});
+
+// ============================================================
+// PRE-BAKED TEST VOICES — generate once, play forever (free)
+// ============================================================
+const VOICE_TEST_LINE = (voice) => `Hi! I am the ${voice} voice. This is how I sound reading a question out loud.`;
+
+async function loadJSZip() {
+  if (window.JSZip) return window.JSZip;
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+    s.onload = () => resolve(window.JSZip);
+    s.onerror = () => reject(new Error('Failed to load JSZip from CDN'));
+    document.head.appendChild(s);
+  });
+}
+
+document.getElementById('admin-bake-voices').addEventListener('click', async () => {
+  const statusEl = document.getElementById('admin-bake-status');
+  if (!hasApiKey()) {
+    statusEl.innerHTML = `<span style="color:var(--coral)">Enter the unlock code in Settings first — the bake calls AIMLAPI on your behalf.</span>`;
+    return;
+  }
+  const voices = Array.from(document.getElementById('settings-tts-voice').options).map(o => o.value);
+  statusEl.textContent = 'Loading zip library...';
+  let JSZip;
+  try { JSZip = await loadJSZip(); } catch (e) {
+    statusEl.innerHTML = `<span style="color:var(--coral)">Couldn't load the zip library. Check your internet connection.</span>`;
+    return;
+  }
+  const zip = new JSZip();
+  const folder = zip.folder('voices');
+  let i = 0;
+  for (const voice of voices) {
+    i++;
+    statusEl.innerHTML = `Generating ${i}/${voices.length}: <code>${voice}.mp3</code>...`;
+    try {
+      const res = await fetch('https://api.aimlapi.com/v1/tts', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${STATE.apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'openai/gpt-4o-mini-tts', text: VOICE_TEST_LINE(voice), voice })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      let blob;
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) {
+        const data = await res.json();
+        const url = (data.audio && (data.audio.url || data.audio)) || data.url;
+        if (typeof url !== 'string') throw new Error('Unexpected JSON response shape');
+        const audioRes = await fetch(url);
+        if (!audioRes.ok) throw new Error(`Audio fetch HTTP ${audioRes.status}`);
+        blob = await audioRes.blob();
+      } else {
+        blob = await res.blob();
+      }
+      folder.file(`${voice}.mp3`, blob);
+    } catch (e) {
+      statusEl.innerHTML = `<span style="color:var(--coral)">Failed on <code>${voice}</code>: ${e.message}. Stopped — partial zip discarded.</span>`;
+      return;
+    }
+  }
+  statusEl.textContent = 'Packaging zip...';
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'hall-pass-voices.zip';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  statusEl.innerHTML = `<span style="color:var(--success)">✓ Done! Unzip into the project root so the path is <code>voices/nova.mp3</code> etc., then push to GitHub. The Test button will use the static files automatically.</span>`;
+});
+
+// Test-button audio: prefer the pre-baked static MP3 (free, instant, abuse-proof);
+// fall back to live AIMLAPI TTS only if the static file isn't there.
+let testAudio = null;
+async function playTestVoice(voice) {
+  if (testAudio) { testAudio.pause(); testAudio = null; }
+  // Try the pre-baked static file first
+  try {
+    const probe = await fetch(`voices/${voice}.mp3`, { method: 'HEAD', cache: 'no-cache' });
+    if (probe.ok) {
+      testAudio = new Audio(`voices/${voice}.mp3`);
+      testAudio.play().catch(err => console.warn('Static voice play failed', err));
+      return;
+    }
+  } catch (e) { /* fall through to live TTS */ }
+  // Fall back to live TTS (costs money, requires API key)
+  if (!hasApiKey()) {
+    alert(`No pre-baked audio for "${voice}" yet, and no access code to generate it live. Either run the Admin tools "Generate test voices zip" once, or enter your code.`);
+    return;
+  }
+  const savedVoice = STATE.ttsVoice;
+  STATE.ttsVoice = voice;
+  speak(VOICE_TEST_LINE(voice));
+  setTimeout(() => { STATE.ttsVoice = savedVoice; }, 100);
+}
+
+// ============================================================
+// PROGRESS FILE EXPORT / IMPORT — cross-device transfer
+// (no backend needed — student moves the .json file themselves)
+// ============================================================
+document.getElementById('settings-progress-download').addEventListener('click', () => {
+  const statusEl = document.getElementById('settings-progress-status');
+  const bundle = progressBundleFromState();
+  if (!bundle.name && (!bundle.history || !bundle.history.length) && !bundle.xp) {
+    statusEl.textContent = 'Nothing to download yet — do some practice first.';
+    return;
+  }
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const codePart = (bundle.progressCode || 'progress').replace(/[^A-Z0-9-]/gi, '');
+  const datePart = new Date().toISOString().slice(0, 10);
+  const fileName = `hall-pass-${codePart}-${datePart}.json`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  statusEl.textContent = `✓ Saved ${fileName}. Open Hall Pass on the other device → Settings → Upload progress.`;
+});
+
+document.getElementById('settings-progress-upload').addEventListener('click', () => {
+  document.getElementById('settings-progress-upload-input').click();
+});
+document.getElementById('settings-progress-upload-input').addEventListener('change', async (ev) => {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';  // allow re-uploading the same file later
+  if (!file) return;
+  const statusEl = document.getElementById('settings-progress-status');
+  let bundle;
+  try {
+    const text = await file.text();
+    bundle = JSON.parse(text);
+  } catch (e) {
+    statusEl.textContent = 'Could not read that file. Make sure it ends in .json and was downloaded from Hall Pass.';
+    return;
+  }
+  if (!bundle || typeof bundle !== 'object' || !('history' in bundle) || !('xp' in bundle)) {
+    statusEl.textContent = `That doesn't look like a Hall Pass progress file.`;
+    return;
+  }
+  const haveLocal = (STATE.history && STATE.history.length > 0) || STATE.xp > 0;
+  if (haveLocal) {
+    const ok = confirm(`Replace your current progress on this device with the file?\n\nIncoming: ${bundle.name || 'unnamed'}, ${bundle.xp || 0} XP, ${(bundle.history || []).length} attempts.\n\nThis device's current progress will be overwritten.`);
+    if (!ok) {
+      statusEl.textContent = 'Upload cancelled — current progress kept.';
+      return;
+    }
+  }
+  if (!applyProgressBundle(bundle)) {
+    statusEl.textContent = "That file looked like progress but couldn't be applied.";
+    return;
+  }
+  document.getElementById('settings-progress-code').value = STATE.progressCode || '';
+  statusEl.textContent = `✓ Loaded progress for ${STATE.name || 'that student'}. Welcome back!`;
   renderHome();
 });
 
